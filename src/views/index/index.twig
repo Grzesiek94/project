@@ -1,0 +1,28 @@
+{# Index action template for Albums controller #}
+{% extends 'base.twig' %}
+
+{% block title %}{{ 'Application Q&A'|trans }}{% endblock %}
+
+{% block head %}
+     {{ parent() }} 
+    <style type="text/css">
+        img { width: 150px; height: 150px; }
+        #big { font-size: 40px; font-weight: bold;}
+        .icon { width: 32px; height: 32px; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <div class="alert alert-{{ flashMessage.type }}" role="alert">
+            {{ flashMessage.content }}
+        </div>
+    {% endfor %}
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque dui, hendrerit eu vulputate eu, maximus vel felis. Integer tincidunt enim quis lorem tempus mattis. Proin eget ex faucibus, cursus ligula eu, dapibus quam. Aliquam non mi id leo convallis molestie. Nunc nulla enim, gravida tincidunt suscipit id, iaculis id justo. Etiam sodales tincidunt sollicitudin. Donec vehicula tellus in dapibus venenatis. Morbi eget lobortis magna, a scelerisque lacus. Nulla blandit volutpat risus in imperdiet. Maecenas quis hendrerit massa.</p>
+
+<p>Suspendisse vitae purus aliquet, imperdiet quam posuere, feugiat augue. Cras vestibulum molestie odio, id bibendum tortor imperdiet eget. In dictum imperdiet egestas. Aliquam erat volutpat. Proin pellentesque tellus erat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras enim urna, convallis ac vehicula in, volutpat a metus. Ut in maximus eros, nec congue dolor.</p>
+
+<p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris non ante eget quam dictum dignissim cursus sit amet lacus. Ut vestibulum, leo nec mattis cursus, velit erat blandit massa, a gravida dolor quam at sem. Nunc lacinia justo vitae sem facilisis molestie. Proin molestie facilisis erat ut mollis. Maecenas tristique sem dignissim sollicitudin consequat. Nam pellentesque ligula ac justo aliquam, id convallis neque accumsan. Nullam ut leo interdum, sagittis elit sed, viverra erat. Suspendisse potenti. Proin purus dui, rhoncus ut pellentesque quis, auctor nec nunc. Mauris neque magna, volutpat vitae quam eget, porta suscipit dolor.</p>
+
+<p>Donec et metus a urna mollis vehicula. Aliquam erat volutpat. Suspendisse bibendum nibh sit amet arcu eleifend, a tristique purus euismod. Curabitur varius dolor non iaculis pretium. Cras convallis arcu massa, eget consequat libero porta in. Nam eleifend massa sit amet rutrum finibus. Integer sodales nec mi pharetra viverra. Curabitur tristique sem metus, quis auctor neque consectetur sed. In ultrices massa lacus, eu egestas leo cursus in. Nulla commodo a ligula eu iaculis</p>
+{% endblock %}

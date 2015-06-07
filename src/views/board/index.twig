@@ -1,0 +1,94 @@
+{# Index action template for Board controller #}
+{% extends 'base.twig' %}
+
+{% block title %}{{ 'Questions list'|trans }}{% endblock %}
+
+{% block head %}
+     {{ parent() }} 
+    <style type="text/css">
+        img { width: 50px; height: 50px; }
+        .avatar { width: 150px; height: 150px; }
+        a { text-decoration: none; }
+        a:hover { text-decoration: none; }
+    </style>
+{% endblock %}
+{% block content %}
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <br>
+        <div class="alert alert-{{ flashMessage.type }}" role="alert">
+            {{ flashMessage.content }}
+            <br>
+        </div>
+    {% endfor %}
+    
+    <h2>
+        <center>{{ user.login|upper }}</center>
+    </h2>
+    <img class="img-thumbnail avatar" src="{{ app.request.basepath }}/media/{{ user.avatar|e }}" />
+
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <form action="{{ url('board', {'id': user_id}) }}" method="post">
+            <h3>
+                Ask me a question:
+            </h3>
+            <div class="col-md-11">{{ form_widget(form) }}</div>
+            <div><input class="btn btn-default" type="submit" name="submit" value="{{ 'Ask'|trans }}" /></div>
+        </form>
+        <br>
+    {% endif %}
+    <h3>
+        {{ 'Questions list'|trans }}
+    </h3>
+    {%  if board|length > 0 %}
+        {% if paginator.pagesCount > 1 %}
+            <div>
+                <ul class="pagination">
+                    {% set previous = (paginator.page - 1) %}
+                    {% set next = (paginator.page + 1) %}
+                    {% if paginator.page > 1 %}
+                        <li><a href="{{ url('board', {'id': user_id, 'page': previous}) }}" title="{{ 'previous page'|trans }}">&laquo</a></li>
+                    {% else %}
+                        <li class="disabled"><a href="" title="{{ 'previous page'|trans }}">&laquo</a></li>
+                    {%  endif %}
+
+                    {% for i in 1..paginator.pagesCount %}
+                        {% if i == paginator.page %}
+                            <li class="active"><a href="{{ url('board', {'id': user_id, 'page': i}) }}">{{ i }}</a></li>
+                        {% else %}
+                            <li><a href="{{ url('board', {'id': user_id, 'page': i}) }}">{{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if paginator.page < paginator.pagesCount %}
+                        <li><a href="{{ url('board', {'id': user_id, 'page': next}) }}" title="{{ 'next page'|trans }}">&raquo</a></li>
+                    {% else %}
+                        <li class="disabled"><a href="" title="{{ 'next page'|trans }}">&raquo</a></li>
+                    {% endif  %}
+                </ul>
+            </div>
+        {% endif %}
+        <table class="table table-hover">
+            <tbody>
+            {% for data in board %} 
+                <tr>
+                    <td><center>
+                        <a href="{{ url('board', {'id': data.users_question_id, 'page': 1}) }}" title="{{ data.login }}">
+                            <img class="img-thumbnail" src="{{ app.request.basepath }}/media/{{ data.avatar|e }}" /><br>
+                        </a>
+                        {{ data.login }}</center>
+                    </td>
+                    <td>
+                        <b><big>{{ data.question }}</big></b>
+                        <br><br>{{ data.answer }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            {{ 'Questions not found'|trans }}.
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}

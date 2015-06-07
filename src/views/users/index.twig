@@ -1,0 +1,68 @@
+{# Index action template for Albums controller #}
+{% extends 'base.twig' %}
+
+{% block title %}{{ 'Users list'|trans }}{% endblock %}
+
+{% block head %}
+     {{ parent() }} 
+    <style type="text/css">
+        img { width: 150px; height: 150px; }
+        #big { font-size: 40px; font-weight: bold;}
+        .icon { width: 32px; height: 32px; }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <br>
+        <div class="alert alert-{{ flashMessage.type }}" role="alert">
+            {{ flashMessage.content }}
+        </div>
+    {% endfor %}
+
+    <h1>
+        {{ 'Users list'|trans }}
+    </h1>
+    <div> 
+            {% if paginator.page < paginator.pagesCount %}
+                {% set next = (paginator.page + 1) %}
+                <a href="{{ url('user_index', {'page': next}) }}" title="{{ 'next page'|trans }}">{{ 'next page'|trans }}</a>
+            {% endif  %}
+
+
+            {% if paginator.page > 1 %}
+                {% set previous = (paginator.page - 1) %}
+                <a href="{{ url('user_index', {'page': previous}) }}" title="{{ 'previous page'|trans }}">{{ 'previous page'|trans }}</a>
+            {%  endif %}
+
+    <div>
+    {%  if users|length > 0 %}
+        <table class="table table-hover">
+            <tbody>
+            {% for user in users %}
+                <tr onClick="location.href='{{ url('board', {'id': user.id}) }}'">
+                        <td><img class="img-thumbnail" src="{{ app.request.basepath }}/media/{{ user.avatar|e }}" /></td>
+                        <td>
+                            <p id="big">{{ user.login|upper }}</p>
+                            {{ user.name }} {{ user.surname }}<br><br>
+                            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                <a href="{{ url('user_view', {'id': user.id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/rcons-e-mail-client/32/search_contact_mail-512.png" class="icon" alt="delete"></a>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ url('user_edit', {'id': user.id}) }}"><img src="http://static.tumblr.com/4c0d946457ea30931e1b10dc8e378e87/jjjsjij/RXWmz1z5x/tumblr_static_edit_logo.png" class="icon" alt="edit""></a>
+                                <a href="{{ url('user_delete', {'id': user.id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" alt="delete"></a>
+                            {% endif %}
+                        </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            {{ 'Users not found'|trans }}.
+        </div>
+    {% endif %}
+    </div>
+    <div></div>
+{% endblock %}

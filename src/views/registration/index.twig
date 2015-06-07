@@ -1,0 +1,37 @@
+{# Register action template for Registration controller #}
+{% extends 'base.twig' %}
+
+{% block title %}{{ 'Registration'|trans }}{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <div class="alert alert-{{ flashMessage.type }}" role="alert">
+            {{ flashMessage.content }}
+        </div>
+    {% endfor %}
+    	<h2>{{ 'Add user'|trans }}</h2>
+	<div class="col-md-2"></div>
+        <div class="col-md-8">
+    	    <div class="well">
+                <center>
+                <form role="form" action="{{ url('registration') }}" method="post">
+                    {{ form_start(form)  }}
+                        <div class="form-group">
+                            {{ form_row(form.login) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.password) }}
+                        </div>
+                        <div class="form-group">
+                            {{ form_row(form.confirm) }}
+                        </div>
+                        <input type="submit" class="btn btn-default" name="submit" value="{{ 'Register'|trans }}" />
+                    {{ form_end(form) }}
+                </form>
+            </div>
+        </div>
+{% endblock %}

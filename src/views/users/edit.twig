@@ -1,0 +1,14 @@
+{# Edit action template for Users controller #}
+{% extends 'base.twig' %}
+
+{% block title %}{{  'Edit user'|trans }}{% endblock %}
+
+{% block content %}
+    <h1>
+        {{ 'Edit user'|trans }}
+    </h1>
+    <form action="{{ url('user_edit', {'id':id}) }}" method="post">
+        {{ form_widget(form) }}
+        <input class="btn btn-default" type="submit" name="submit" value="{{ 'Save'|trans }}" />
+    </form>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.twig' %}
+
+{% block title %}{{ 'Log in'|trans }}{% endblock %}
+
+{% block content %}
+    <h2>{{ 'Login'|trans }}</h2>
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="well">
+            <center>
+            <form role="form" action="{{ path('auth_login_check') }}" method="post">
+                {{ form_start(form)  }}
+                    <div class="form-group">
+                        {{ form_row(form.login) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(form.password) }}
+                    </div>
+                    <input type="submit" class="btn btn-default" name="submit" value="{{ 'Login'|trans }}" />
+                {{ form_end(form) }}
+            </form>
+        </div>
+        {{ error }}
+    </div>
+{% endblock %}
