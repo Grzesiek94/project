@@ -46,6 +46,9 @@ class UsersController implements ControllerProviderInterface
             ->bind('user_index');
         $usersController->match('/add', array($this, 'addAction'))
             ->bind('user_add');
+        $usersController->match('/search/', array($this, 'searchAction'));
+        $usersController->match('/search', array($this, 'searchAction'))
+            ->bind('user_search');
         $usersController->match('/add/', array($this, 'addAction'));
         $usersController->match('/edit/{id}', array($this, 'editAction'))
             ->bind('user_edit');
@@ -198,4 +201,19 @@ class UsersController implements ControllerProviderInterface
         return $app['twig']->render('users/delete.twig', $this->view);
     } 
 
+    /**
+     * Search action.
+     *
+     * @access public
+     * @param Silex\Application $app Silex application
+     * @param Symfony\Component\HttpFoundation\Request $request Request object
+     * @return string Output
+     */
+    public function searchAction(Application $app, Request $request)
+    {
+        $login = $_GET['login'];
+        $usersModel = new UsersModel($app);
+        $this->view['user'] = $usersModel->getSingleUser($login);
+        return $app['twig']->render('users/search.twig', $this->view);
+    }
 }

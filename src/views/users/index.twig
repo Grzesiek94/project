@@ -42,7 +42,7 @@
             <tbody>
             {% for user in users %}
                 <tr onClick="location.href='{{ url('board', {'id': user.id}) }}'">
-                        <td><img class="img-thumbnail" src="{{ app.request.basepath }}/media/{{ user.avatar|e }}" /></td>
+                        <td><img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" /></td>
                         <td>
                             <p id="big">{{ user.login|upper }}</p>
                             {{ user.name }} {{ user.surname }}<br><br>

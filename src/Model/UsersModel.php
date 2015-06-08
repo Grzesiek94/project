@@ -203,5 +203,29 @@ class UsersModel
             return $this->db->delete('users_data', array('id' => $id));
         }
     }
+
+    /**
+     * Gets single user.
+     *
+     * @access public
+     * @param integer $id Record Id
+     * @return array Result
+     */
+    public function getSingleUser($login)
+    {
+        if ($login != '') {
+            $query = 'SELECT users.id, login, name, surname, avatar
+                      FROM users, users_data
+                      WHERE users.id = users_id
+                      AND login = :login';
+            $statement = $this->db->prepare($query);
+            $statement->bindValue('login', $login, \PDO::PARAM_STR);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : current($result);
+        } else {
+            return array();
+        }
+    }
 }
 
