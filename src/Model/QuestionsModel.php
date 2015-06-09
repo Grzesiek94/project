@@ -124,6 +124,7 @@ class QuestionsModel
             unset($data['id']);
             unset($data['login']);
             unset($data['avatar']);
+            unset($data['del']);
             return $this->db->update('board', $data, array('id' => $id));
         }
     }

@@ -101,7 +101,7 @@ class QuestionsController implements ControllerProviderInterface
                 $app['session']->getFlashBag()->add(
                 'message', array(
                     'type' => 'success', 'content' =>
-                    $app['translator']->trans('Data edited.')
+                    $app['translator']->trans('Answer added correctly.')
                             )
                 );
                 return $app->redirect(
