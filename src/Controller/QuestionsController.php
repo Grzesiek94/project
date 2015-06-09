@@ -13,6 +13,7 @@ use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Model\QuestionsModel;
+use Model\BoardModel;
 use Form\QuestionForm;
 
 /**
@@ -37,14 +38,16 @@ class QuestionsController implements ControllerProviderInterface
      *
      * @access public
      * @param Silex\Application $app Silex application
-     * @return UsersController Result
+     * @return QuestionsController Result
      */
     public function connect(Application $app)
     {
-        $usersController = $app['controllers_factory'];
-        $usersController->get('/{quest}', array($this, 'indexAction'))
-                         ->value('quest', 1)->bind('questions_index');
-        return $usersController;
+        $questionsController = $app['controllers_factory'];
+        $questionsController->match('/', array($this, 'indexAction'))
+                         ->bind('questions_index');
+        $questionsController->match('/answer/{id}', array($this, 'answerAction'))
+                         ->bind('questions_edit');
+        return $questionsController;
     }
 
     /**
@@ -57,63 +60,52 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
-        $pageLimit = 10;
-        $page = (int) $request->get('page', 1);
-        $usersModel = new UsersModel($app);
-        $this->view = array_merge(
-            $this->view, $usersModel->getPaginatedAlbums($page, $pageLimit)
-        );
-        return $app['twig']->render('users/index.twig', $this->view);
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        $id = (int)$boardModel->getUserId($currentUser);
+        $questionsModel = new QuestionsModel($app);
+        $this->view['questions'] = $questionsModel->getUnanswered($id);
+        return $app['twig']->render('questions/index.twig', $this->view);
     }
-
     /**
-     * View action.
+     * Answer action.
      *
      * @access public
      * @param Silex\Application $app Silex application
      * @param Symfony\Component\HttpFoundation\Request $request Request object
      * @return string Output
      */
-    public function viewAction(Application $app, Request $request)
+    public function answerAction(Application $app, Request $request)
     {
-        $id = (int)$request->get('id', null);
-        $usersModel = new UsersModel($app);
-        $this->view['user'] = $usersModel->getUser($id);
-var_dump($this->view);
-        return $app['twig']->render('users/view.twig', $this->view);
-    }
-
-    /**
-     * Edit action.
-     *
-     * @access public
-     * @param Silex\Application $app Silex application
-     * @param Symfony\Component\HttpFoundation\Request $request Request object
-     * @return string Output
-     */
-    public function editAction(Application $app, Request $request)
-    {
-
-        $usersModel = new UsersModel($app);
-        $id = (int) $request->get('id', 0);
-        $user = $usersModel->goEditUser($id);
-        if (count($user)) {
+        $id = (int) $request->get('id', null);
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        $userId = (int)$boardModel->getUserId($currentUser);
+        $questionsModel = new QuestionsModel($app);
+        $question = $questionsModel->getSingleQuestion($id, $userId);
+        $this->view['question'] = $question;
+        if (count($question)) {
             $form = $app['form.factory']
-                ->createBuilder(new UserForm(), $user)->getForm();
+                ->createBuilder(new QuestionForm(), $question)->getForm();
             $form->handleRequest($request);
 
             if ($form->isValid()) {
                 $data = $form->getData();
-                $usersModel = new UsersModel($app);
-                $usersModel->editUser($data);
+                $questionsModel->answer($data);
                 $app['session']->getFlashBag()->add(
                 'message', array(
                     'type' => 'success', 'content' =>
                     $app['translator']->trans('Data edited.')
-                           )
+                            )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('user_index'), 301
+                    $app['url_generator']->generate('questions_index'), 301
                 );
             }
 
@@ -121,66 +113,16 @@ var_dump($this->view);
             $this->view['form'] = $form->createView();
 
         } else {
+            $app['session']->getFlashBag()->add(
+            'message', array(
+                'type' => 'danger', 'content' =>
+                $app['translator']->trans('You tried to make something illegal! Be care.')
+                        )
+            );
             return $app->redirect(
-                $app['url_generator']->generate('user_index'), 301
+                $app['url_generator']->generate('questions_index'), 301
             );
         }
-
-        return $app['twig']->render('users/edit.twig', $this->view);
+        return $app['twig']->render('questions/answer.twig', $this->view);
     }
-
-    /**
-     * Delete action.
-     *
-     * @access public
-     * @param Silex\Application $app Silex application
-     * @param Symfony\Component\HttpFoundation\Request $request Request object
-     * @return string Output
-     */
-    public function deleteAction(Application $app, Request $request)
-    {
-
-        $usersModel = new UsersModel($app);
-        $id = (int) $request->get('id', 0);
-        $user = $usersModel->goEditUser($id);
-
-        if (count($user)) {
-            $form = $app['form.factory']
-                ->createBuilder(new UserForm(), $user)->getForm();
-            $form->remove('name');
-            $form->remove('surname');
-            $form->remove('email');
-            $form->remove('website');
-            $form->remove('facebook');
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                $data = $form->getData();
-                $usersModel = new UsersModel($app);
-                $usersModel->deleteUser($data);
-                $usersModel = new UsersModel($app);
-                $usersModel->deleteDetails($data);
-                $app['session']->getFlashBag()->add(
-                'message', array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('User deleted.')
-                           )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('user_index'), 301
-                );
-            }
-
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
-
-        } else {
-            return $app->redirect(
-                $app['url_generator']->generate('user_index'), 301
-            );
-        }
-
-        return $app['twig']->render('users/delete.twig', $this->view);
-    } 
-
 }

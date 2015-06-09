@@ -14,6 +14,7 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Model\UsersModel;
 use Form\UserForm;
+use Model\BoardModel;
 
 /**
  * Class UsersController.
@@ -98,6 +99,12 @@ class UsersController implements ControllerProviderInterface
         $id = (int)$request->get('id', null);
         $usersModel = new UsersModel($app);
         $this->view['user'] = $usersModel->getUser($id);
+        if (!count($this->view['user']))
+        {
+            return $app->redirect(
+                $app['url_generator']->generate('user_index'), 301
+            );
+        }
         return $app['twig']->render('users/view.twig', $this->view);
     }
 
@@ -114,7 +121,7 @@ class UsersController implements ControllerProviderInterface
 
         $usersModel = new UsersModel($app);
         $id = (int) $request->get('id', 0);
-        $user = $usersModel->goEditUser($id);
+        $user = $usersModel->getUserDetails($id);
         if (count($user)) {
             $form = $app['form.factory']
                 ->createBuilder(new UserForm(), $user)->getForm();
@@ -159,10 +166,15 @@ class UsersController implements ControllerProviderInterface
     {
 
         $usersModel = new UsersModel($app);
-        $id = (int) $request->get('id',0);
-        $user = $usersModel->goEditUser($id);
-
-        if (count($user)) {
+        $id = (int)$request->get('id', null);
+        $user = $usersModel->getUserDetails($id);
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        
+        if (count($user) && (int)$boardModel->getUserId($currentUser) != $id) {
             $form = $app['form.factory']
                 ->createBuilder(new UserForm(), $user)->getForm();
             $form->remove('name');
@@ -174,10 +186,7 @@ class UsersController implements ControllerProviderInterface
 
             if ($form->isValid()) {
                 $data = $form->getData();
-                $usersModel = new UsersModel($app);
                 $usersModel->deleteUser($data);
-                $usersModel = new UsersModel($app);
-                $usersModel->deleteDetails($data);
                 $app['session']->getFlashBag()->add(
                 'message', array(
                     'type' => 'success', 'content' =>

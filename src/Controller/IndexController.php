@@ -41,10 +41,10 @@ class IndexController implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $indexController = $app['controllers_factory'];
-        $indexController->get('/', array($this, 'indexAction'))
-            ->bind('main');
         $indexController->match('/add', array($this, 'addAction'))
             ->bind('user_add');
+        $indexController->get('/', array($this, 'indexAction'))
+            ->bind('main');
         return $indexController;
     }
 

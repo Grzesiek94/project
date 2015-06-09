@@ -45,7 +45,8 @@ class UsersModel
             $query = 'SELECT users.id, avatar, login, name, surname, email, website, facebook
                       FROM users, users_data
                       WHERE users.id = users_id
-                      AND users.id = :id';
+                      AND users.id = :id
+                      AND del = 0';
             $statement = $this->db->prepare($query);
             $statement->bindValue('id', $id, \PDO::PARAM_INT);
             $statement->execute();
@@ -63,12 +64,14 @@ class UsersModel
      * @param integer $id Record Id
      * @return array Result
      */
-    public function goEditUser($id)
+    public function getUserDetails($id)
     {
         if (($id != '') && ctype_digit((string)$id)) {
-            $query = 'SELECT id, name, surname, email, website, facebook
-                      FROM users_data
-                      WHERE id = :id';
+            $query = 'SELECT users_data.id, name, surname, email, website, facebook
+                      FROM users_data, users
+                      WHERE users.id = users_data.id
+                      AND users.id = :id
+                      AND del = 0';
             $statement = $this->db->prepare($query);
             $statement->bindValue('id', $id, \PDO::PARAM_INT);
             $statement->execute();
@@ -92,6 +95,7 @@ class UsersModel
         $query = 'SELECT users.id, login, name, surname, avatar
                   FROM users, users_data
                   WHERE users.id = users_id
+                  AND del = 0
                   LIMIT :start, :limit';
         $statement = $this->db->prepare($query);
         $statement->bindValue('start', ($page-1)*$limit, \PDO::PARAM_INT);
@@ -111,7 +115,7 @@ class UsersModel
     public function countUsersPages($limit)
     {
         $pagesCount = 0;
-        $sql = 'SELECT COUNT(*) as pages_count FROM users';
+        $sql = 'SELECT COUNT(*) as pages_count FROM users WHERE del = 0';
         $result = $this->db->fetchAssoc($sql);
         if ($result) {
             $pagesCount = ceil($result['pages_count']/$limit);
@@ -183,24 +187,14 @@ class UsersModel
             && ctype_digit((string)$user['id'])) {
             // delete record
             $id = $user['id'];
-            return $this->db->delete('users', array('id' => $id));
-        }
-    }
-
-     /* Delete user's data.
-     *
-     * @access public
-     * @param array $album Album data
-     * @retun mixed Result
-     */
-    public function deleteDetails($data)
-    {
-        if (isset($data['id'])
-            && ($data['id'] != '')
-            && ctype_digit((string)$data['id'])) {
-            // delete record
-            $id = $data['id'];
-            return $this->db->delete('users_data', array('id' => $id));
+            unset($user['id']);
+            unset($user['name']);
+            unset($user['surname']);
+            unset($user['email']);
+            unset($user['website']);
+            unset($user['facebook']);
+            $user['del'] = 1;
+            return $this->db->update('users', $user, array('id' => $id));
         }
     }
 
@@ -217,7 +211,8 @@ class UsersModel
             $query = 'SELECT users.id, login, name, surname, avatar
                       FROM users, users_data
                       WHERE users.id = users_id
-                      AND login = :login';
+                      AND login = :login
+                      AND del = 0';
             $statement = $this->db->prepare($query);
             $statement->bindValue('login', $login, \PDO::PARAM_STR);
             $statement->execute();

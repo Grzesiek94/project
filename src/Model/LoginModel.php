@@ -94,6 +94,7 @@ class LoginModel
                 `users`
               WHERE
                 `login` = :login
+              AND del = 0
             ';
             $statement = $this->db->prepare($query);
             $statement->bindValue('login', $login, \PDO::PARAM_STR);
@@ -127,6 +128,7 @@ class LoginModel
                 ON `users`.`role_id` = `roles`.`id`
                 WHERE
                     `users`.`id` = :user_id
+                AND del = 0
                 ';
             $statement = $this->db->prepare($query);
             $statement->bindValue('user_id', $userId, \PDO::PARAM_INT);

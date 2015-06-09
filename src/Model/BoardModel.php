@@ -66,7 +66,8 @@ class BoardModel
      */
     public function getQuestionsPage($page, $limit, $id)
     {
-        $query = 'SELECT 
+        $query = 'SELECT
+                      del,
                       login,
                       avatar,
                       question,
@@ -82,6 +83,7 @@ class BoardModel
                   WHERE
                       users_answer_id = :id
                   AND answer IS NOT NULL
+                  ORDER BY board.id DESC
                   LIMIT :start, :limit';
         $statement = $this->db->prepare($query);
         $statement->bindValue('id', $id, \PDO::PARAM_INT);

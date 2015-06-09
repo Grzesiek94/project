@@ -61,7 +61,11 @@ class UserForm extends AbstractType
                 'constraints' => array(
                     new Assert\NotBlank(),
                     new Assert\Length(array('min' => 3, 'max' => 10))
-                )
+                ),
+                'attr' => array(
+                        'class' => 'form-control',
+                        'placeholder' => 'Name'
+                ),
             )
         )
         ->add(
@@ -71,15 +75,24 @@ class UserForm extends AbstractType
                 'constraints' => array(
                     new Assert\NotBlank(),
                     new Assert\Length(array('min' => 3, 'max' => 20))
-                )
+                ),
+                'attr' => array(
+                        'class' => 'form-control',
+                        'placeholder' => 'Surname'
+                ),
             )
         )
         ->add(
             'email',
             'text', 
             array(
-                'constraints' => new Assert\Email()
+                'constraints' => new Assert\Email(),
+                'attr' => array(
+                        'class' => 'form-control',
+                        'placeholder' => 'e-mail'
+                ),
             )
+
         )
         ->add(
             'website', 
@@ -87,7 +100,11 @@ class UserForm extends AbstractType
             array(
                 'constraints' => array(
                     new Assert\Length(array('min' => 10, 'max' => 50))
-                )
+                ),
+                'attr' => array(
+                        'class' => 'form-control',
+                        'placeholder' => 'Your website'
+                ),
             )
         )
         ->add(
@@ -96,7 +113,11 @@ class UserForm extends AbstractType
             array(
                 'constraints' => array(
                     new Assert\Length(array('max' => 50))
-                )
+                ),
+                'attr' => array(
+                        'class' => 'form-control',
+                        'placeholder' => 'Your facebook'
+                ),
             )
         );
 

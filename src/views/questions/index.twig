@@ -1,0 +1,65 @@
+{# Index action template for Questions controller #}
+{% extends 'base.twig' %}
+
+{% block title %}{{  'Questions list'|trans }}{% endblock %}
+
+{% block head %}
+     {{ parent() }} 
+    <style type="text/css">
+        img { width: 50px; height: 50px; }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+{% for flashMessage in app.session.getFlashBag.get('message') %}
+    <br>
+    <div class="alert alert-{{ flashMessage.type }}" role="alert">
+        {{ flashMessage.content }}
+    </div>
+{% endfor %}
+
+    <h1>
+        {{ 'Questions list'|trans }}
+    </h1>
+    {%  if questions|length > 0 %}
+        <table class="table table-hover">
+            <tbody>
+            {% for data in questions %} 
+                <tr>
+                    <td><center>
+                        {% if data.del == 0 %}
+                            <a href="{{ url('board', {'id': data.users_question_id, 'page': 1}) }}" title="{{ data.login }}">
+                                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" /><br>
+                            </a>
+                            {{ data.login }}
+                        {% else %}
+                            <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/del.jpg" />
+                        {% endif %}
+                    </center></td>
+                    <td>
+                        {% if data.del == 0 %}
+                            {{ data.login }}
+                        {% else %}
+                            deleted
+                        {% endif %}
+                        asked a question:<br>
+                        <b><big>{{ data.question }}</big></b>
+                    </td>
+                    <td>
+                        <a href="{{ url('questions_edit', {'id': data.id}) }}" title="{{ data.login }}">
+                            ODPOWIEDZ
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            {{ 'Questions not found'|trans }}.
+        </div>
+    {% endif %}
+{% endblock %}
+

@@ -24,17 +24,31 @@
     <h1>
         {{ 'Users list'|trans }}
     </h1>
-    <div> 
-            {% if paginator.page < paginator.pagesCount %}
-                {% set next = (paginator.page + 1) %}
-                <a href="{{ url('user_index', {'page': next}) }}" title="{{ 'next page'|trans }}">{{ 'next page'|trans }}</a>
-            {% endif  %}
-
-
-            {% if paginator.page > 1 %}
+    {% if paginator.pagesCount > 1 %}
+        <div>
+            <ul class="pagination">
                 {% set previous = (paginator.page - 1) %}
-                <a href="{{ url('user_index', {'page': previous}) }}" title="{{ 'previous page'|trans }}">{{ 'previous page'|trans }}</a>
-            {%  endif %}
+                {% set next = (paginator.page + 1) %}
+                {% if paginator.page > 1 %}
+                    <li><a href="{{ url('user_index', {'page': previous}) }}" title="{{ 'previous page'|trans }}">&laquo</a></li>
+                {% else %}
+                    <li class="disabled"><a href="" title="{{ 'previous page'|trans }}">&laquo</a></li>
+                {%  endif %}
+                {% for i in 1..paginator.pagesCount %}
+                    {% if i == paginator.page %}
+                        <li class="active"><a href="{{ url('user_index', {'page': i}) }}">{{ i }}</a></li>
+                    {% else %}
+                        <li><a href="{{ url('user_index', {'page': i}) }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if paginator.page < paginator.pagesCount %}
+                    <li><a href="{{ url('user_index', {'page': next}) }}" title="{{ 'next page'|trans }}">&raquo</a></li>
+                {% else %}
+                    <li class="disabled"><a href="" title="{{ 'next page'|trans }}">&raquo</a></li>
+                {% endif  %}
+            </ul>
+        </div>
+    {% endif %}
 
     <div>
     {%  if users|length > 0 %}

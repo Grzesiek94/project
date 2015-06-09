@@ -10,26 +10,33 @@
 {% endblock %}
 
 {% block content %}
-    <br>
-    <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" />
-    <h1>
-        {{ user.login }}
-    </h1>
-    {{ 'Surame:'|trans }}
-    <big>
-        {{ user.surname }}
-    </big><br>
-    {{ 'Name:'|trans }}
-    <small>
-        {{ user.name }}
-    </small><br>
-    {{ 'e-mail:'|trans }}
-        {{ user.email }}<br>
-    {{ 'website:'|trans }}
-    <a href="{{ user.website }}">{{ user.website }}</a><br>
-    {% if user.facebook|length > 0 %}
-        <a href="{{ user.facebook }}">{{ 'facebook'|trans }}</a>
+    {%  if user|length > 0 %}
+        <br>
+        <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" />
+        <h1>
+            {{ user.login }}
+        </h1>
+        {{ 'Surame:'|trans }}
+        <big>
+            {{ user.surname }}
+        </big><br>
+        {{ 'Name:'|trans }}
+        <small>
+            {{ user.name }}
+        </small><br>
+        {{ 'e-mail:'|trans }}
+            {{ user.email }}<br>
+        {{ 'website:'|trans }}
+        <a href="{{ user.website }}">{{ user.website }}</a><br>
+        {% if user.facebook|length > 0 %}
+            <a href="{{ user.facebook }}">{{ 'facebook'|trans }}</a>
+        {% endif %}
+        <br><br><br><br><br><br>
+        <a href="{{ url('user_index') }}" >POWRÓT NA POPRZEDNIĄ STRONĘ</a>
+    {% else %}
+        <br>
+        <div class="alert alert-danger" role="alert">
+            {{ 'User not found'|trans }}.
+        </div>
     {% endif %}
-    <br><br><br><br><br><br>
-    <a href="{{ url('user_index') }}" >POWRÓT NA POPRZEDNIĄ STRONĘ</a>
 {% endblock %}

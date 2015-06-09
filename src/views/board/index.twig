@@ -73,10 +73,14 @@
                 <tr>
                     <td><center>
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            <a href="{{ url('board', {'id': data.users_question_id, 'page': 1}) }}" title="{{ data.login }}">
-                                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" /><br>
-                            </a>
-                            {{ data.login }}
+                            {% if data.del == 0 %}
+                                <a href="{{ url('board', {'id': data.users_question_id, 'page': 1}) }}" title="{{ data.login }}">
+                                    <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" /><br>
+                                </a>
+                                {{ data.login }}
+                            {% else %}
+                                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/del.jpg" />
+                            {% endif %}
                         {% else %}
                             <a href="{{ url('auth_login') }}">
                                 Zaloguj się,<br>aby zobaczyć<br>kto zadał pytanie
