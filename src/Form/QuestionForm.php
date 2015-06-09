@@ -58,6 +58,21 @@ class QuestionForm extends AbstractType
                 ),
             'label' => false
             )
+        )
+        ->add(
+            'question', 
+            'text',
+            array(
+                'constraints' => array(
+                    new Assert\NotBlank(),
+                    new Assert\Length(array('min' => 1, 'max' => 250))
+                ),
+                'attr' => array(
+                        'class' => 'form-control',
+                        'placeholder' => 'Change question'
+                ),
+            'label' => false
+            )
         );
     }
 

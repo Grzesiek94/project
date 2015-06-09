@@ -1,0 +1,32 @@
+{# Edit action template for Questions controller #}
+{% extends 'base.twig' %}
+
+{% block title %}{{  'Edit qestion'|trans }}{% endblock %}
+
+{% block head %}
+     {{ parent() }} 
+    <style type="text/css">
+        img { margin: 0 10px; float: left; width: 80px; height: 80px; }
+        p { font-size: 30px; font-weight: bold; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <br>
+    <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ question.avatar|e }}" />
+    <p>You asked {{ question.login }}:</p><br><br>
+    <center>
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="well">
+            <form role="form" action="{{ url('my_questions_edit', {'id':id}) }}" method="post">
+                {{ form_start(form)  }}
+                    <div class="form-group">
+                        {{ form_row(form.question) }}
+                    </div>
+                    <input type="submit" class="btn btn-default" name="submit" value="{{ 'Change'|trans }}" />
+                {{ form_end(form) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

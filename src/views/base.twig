@@ -32,7 +32,7 @@
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                             <li><a href="#">My profile</a></li>
                             <li><a href="{{ url('questions_index') }}">My aswers</a></li>
-                            <li><a href="{{ url('questions_index') }}">My questions</a></li>
+                            <li><a href="{{ url('my_questions') }}">My questions</a></li>
                             <li><a href="#">My board</a></li>
                             <li><a href="{{ url('user_index') }}">Users list</a></li>
                         {% endif %}

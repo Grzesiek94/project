@@ -92,7 +92,7 @@ class UsersModel
      */
     public function getUsersPage($page, $limit)
     {
-        $query = 'SELECT users.id, login, name, surname, avatar
+        $query = 'SELECT users.id, role_id, login, name, surname, avatar
                   FROM users, users_data
                   WHERE users.id = users_id
                   AND del = 0
@@ -208,7 +208,7 @@ class UsersModel
     public function getSingleUser($login)
     {
         if ($login != '') {
-            $query = 'SELECT users.id, login, name, surname, avatar
+            $query = 'SELECT users.id, role_id, login, name, surname, avatar
                       FROM users, users_data
                       WHERE users.id = users_id
                       AND login = :login
@@ -220,6 +220,30 @@ class UsersModel
             return !$result ? array() : current($result);
         } else {
             return array();
+        }
+    }
+
+     /* Delete user.
+     *
+     * @access public
+     * @param array $album Album data
+     * @retun mixed Result
+     */
+    public function setAdmin($user)
+    {
+        if (isset($user['id'])
+            && ($user['id'] != '')
+            && ctype_digit((string)$user['id'])) {
+            // delete record
+            $id = $user['id'];
+            unset($user['id']);
+            unset($user['name']);
+            unset($user['surname']);
+            unset($user['email']);
+            unset($user['website']);
+            unset($user['facebook']);
+            $user['role_id'] = 1;
+            return $this->db->update('users', $user, array('id' => $id));
         }
     }
 }

@@ -48,8 +48,11 @@
                         <b><big>{{ data.question }}</big></b>
                     </td>
                     <td>
-                        <a href="{{ url('questions_edit', {'id': data.id}) }}" title="{{ data.login }}">
-                            ODPOWIEDZ
+                        <a href="{{ url('questions_edit', {'id': data.id}) }}" class="btn btn-default" title="answer">
+                            ANSWER
+                        </a>
+                        <a href="{{ url('ignore', {'id': data.id}) }}" class="btn btn-danger" title="ignore">
+                            IGNORE
                         </a>
                     </td>
                 </tr>

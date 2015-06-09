@@ -87,5 +87,6 @@ $app->mount('/', new Controller\IndexController());
 $app->mount('/board', new Controller\BoardController());
 $app->mount('/questions', new Controller\QuestionsController());
 $app->mount('/registration', new Controller\RegistrationController());
+//$app->mount('/manage', new Controller\ManageController());
 $app->mount('auth', new Controller\AuthController());
 $app->run();

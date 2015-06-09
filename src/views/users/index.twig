@@ -59,13 +59,23 @@
                         <td><img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" /></td>
                         <td>
                             <p id="big">{{ user.login|upper }}</p>
-                            {{ user.name }} {{ user.surname }}<br><br>
+                            {{ user.name }} {{ user.surname }}
+                            {% if user.role_id == 1 %}
+                                <small style="color: lime;">[admin]</small><br><br>
+                            {% else %}
+                                <br><br>
+                            {% endif %}
                             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                                 <a href="{{ url('user_view', {'id': user.id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/rcons-e-mail-client/32/search_contact_mail-512.png" class="icon" alt="delete"></a>
                             {% endif %}
                             {% if is_granted('ROLE_ADMIN') %}
                                 <a href="{{ url('user_edit', {'id': user.id}) }}"><img src="http://static.tumblr.com/4c0d946457ea30931e1b10dc8e378e87/jjjsjij/RXWmz1z5x/tumblr_static_edit_logo.png" class="icon" alt="edit""></a>
-                                <a href="{{ url('user_delete', {'id': user.id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" alt="delete"></a>
+                                {% if user.login != currentUser %}
+                                    <a href="{{ url('user_delete', {'id': user.id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" alt="delete"></a>
+                                {% endif %}
+                                {% if user.role_id == 2 %}
+                                    <a href="{{ url('set_admin', {'id': user.id}) }}"><img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Apps-system-software-update-icon.png" class="icon" title="set admin"></a>
+                                {% endif %}
                             {% endif %}
                         </td>
                 </tr>
