@@ -56,6 +56,9 @@ class QuestionsController implements ControllerProviderInterface
         $questionsController->get('/ignore/{id}', array($this, 'ignoreAction'));
         $questionsController->match('/ignore/{id}', array($this, 'ignoreAction'))
                          ->bind('ignore');
+        $questionsController->get('/delete/{id}', array($this, 'deleteAction'));
+        $questionsController->match('/delete/{id}', array($this, 'deleteAction'))
+                         ->bind('question_delete');
         return $questionsController;
     }
 
@@ -270,5 +273,58 @@ class QuestionsController implements ControllerProviderInterface
             );
         }
         return $app['twig']->render('questions/ignore.twig', $this->view);
+    }
+
+    /**
+     * delete action.
+     *
+     * @access public
+     * @param Silex\Application $app Silex application
+     * @param Symfony\Component\HttpFoundation\Request $request Request object
+     * @return string Output
+     */
+    public function deleteAction(Application $app, Request $request)
+    {
+        $id = (int) $request->get('id', null);
+        $questionsModel = new QuestionsModel($app);
+        $question = $questionsModel->letsDelete($id);
+        $redirect = $question['users_answer_id'];
+        $this->view['inform'] = $question;
+        if (count($question)) {
+            $form = $app['form.factory']
+                ->createBuilder(new QuestionForm(), $question)->getForm();
+            $form->remove('answer');
+            $form->remove('question');
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $questionsModel->delete($data);
+                $app['session']->getFlashBag()->add(
+                'message', array(
+                    'type' => 'success', 'content' =>
+                    $app['translator']->trans('Question deleted.')
+                            )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('board', array('id' => $redirect)), 301
+                );
+            }
+
+            $this->view['id'] = $id;
+            $this->view['form'] = $form->createView();
+
+        } else {
+            $app['session']->getFlashBag()->add(
+            'message', array(
+                'type' => 'danger', 'content' =>
+                $app['translator']->trans('You tried to make something illegal! Be care.')
+                        )
+            );
+            return $app->redirect(
+                $app['url_generator']->generate('user_index'), 301
+            );
+        }
+        return $app['twig']->render('questions/delete.twig', $this->view);
     }
 }

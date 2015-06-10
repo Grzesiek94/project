@@ -10,6 +10,7 @@
         .avatar { width: 150px; height: 150px; }
         a { text-decoration: none; }
         a:hover { text-decoration: none; }
+        .icon { width: 20px; height: 20px; }
     </style>
 {% endblock %}
 {% block content %}
@@ -92,6 +93,11 @@
                         <b><big>{{ data.question }}</big></b>
                         <br><br>{{ data.answer }}
                     </td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>
+                            <a href="{{ url('question_delete', {'id': data.question_id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" title="delete question"></a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>

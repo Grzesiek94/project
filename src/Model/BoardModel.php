@@ -67,6 +67,7 @@ class BoardModel
     public function getQuestionsPage($page, $limit, $id)
     {
         $query = 'SELECT
+                      board.id as question_id,
                       del,
                       login,
                       avatar,

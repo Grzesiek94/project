@@ -29,7 +29,7 @@ class BoardController implements ControllerProviderInterface
      * Data for view.
      *
      * @access protected
-     * @var array $_view
+     * @var array $view
      */
     protected $view = array();
 
@@ -42,10 +42,12 @@ class BoardController implements ControllerProviderInterface
      */
     public function connect(Application $app)
     {
-        $indexController = $app['controllers_factory'];
-        $indexController->match('/{id}/page/{page}', array($this, 'indexAction'))
-            ->value('page', 1)->bind('board');
-        return $indexController;
+        $boardController = $app['controllers_factory'];
+       // $boardController = match('/', array($this, 'indexAction'))
+         //   ->bind('board_null');
+        $boardController->match('/{id}/page/{page}', array($this, 'indexAction'))
+           ->value('id', null)->value('page', 1)->bind('board');
+        return $boardController;
     }
 
     /**
@@ -59,7 +61,12 @@ class BoardController implements ControllerProviderInterface
     public function indexAction(Application $app, Request $request)
     {
         $pageLimit = 15;
-        $id = (int)$request->get('id', null);
+$token = $app['security']->getToken();
+if (null !== $token) {
+$currentUser = $token->getUsername();
+}
+$boardModel = new BoardModel($app);
+        $id = (int)$request->get('id', $boardModel->getUserId($currentUser));
         $page = (int) $request->get('page', 1);
         $this->view['user_id'] = $id;
         $boardModel = new BoardModel($app);

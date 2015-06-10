@@ -154,6 +154,23 @@ class QuestionsModel
         }
     }
 
+    /* ignore.
+     *
+     * @access public
+     * @param array $data Question data
+     * @retun mixed Result
+     */
+    public function delete($data)
+    {
+        if (isset($data['id'])
+            && ($data['id'] != '')
+            && ctype_digit((string)$data['id'])) {
+            // update record
+            $id = $data['id'];
+            return $this->db->delete('board', $data, array('id' => $id));
+        }
+    }
+
     /**
      * Gets single user data.
      *
@@ -224,6 +241,35 @@ class QuestionsModel
             $statement = $this->db->prepare($query);
             $statement->bindValue('id', $id, \PDO::PARAM_INT);
             $statement->bindValue('userId', $userId, \PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : current($result);
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * Gets single question to edit.
+     *
+     * @access public
+     * @param integer $id Record Id
+     * @return array Result
+     */
+    public function letsDelete($id)
+    {
+        if (($id != '') && ctype_digit((string)$id)) {
+            $query = 'SELECT
+                          id,
+                          users_answer_id
+                      FROM 
+	                  board
+                      WHERE
+                          board.id = :id
+                      AND row_ignore = 0;
+                      AND answer IS NOT NULL';
+            $statement = $this->db->prepare($query);
+            $statement->bindValue('id', $id, \PDO::PARAM_INT);
             $statement->execute();
             $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
             return !$result ? array() : current($result);
