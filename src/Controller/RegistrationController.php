@@ -61,7 +61,6 @@ class RegistrationController implements ControllerProviderInterface
             'login' => '',
             'password' => '',
             'confirm' => '',
-            'role_id' => '2',//
         );
         $form = $app['form.factory']
             ->createBuilder(new RegistrationForm(), $data)->getForm();
@@ -70,13 +69,11 @@ class RegistrationController implements ControllerProviderInterface
 
         if ($form->isValid()) {
             $data = $form->getData();
-            if ($data['password'] === $data['confirm']) {
-                unset($data['confirm']);
-                $data['password'] = $app['security.encoder.digest']->encodePassword($data['password'],'');
-                $registrationModel = new RegistrationModel($app);
-                $registrationModel->addUser($data);
+            $registrationModel = new RegistrationModel($app);
+            $register = $registrationModel->addUser($app, $data);
+            if (count($register)) {
                 $details = $registrationModel->getUserId();
-                $registrationModel->addUserData($details[0]);
+                $registrationModel->addUserData($details);
                 $app['session']->getFlashBag()->add(
                     'message', array(
                         'type' => 'success', 'content' => 

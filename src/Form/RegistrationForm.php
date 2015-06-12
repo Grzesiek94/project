@@ -81,15 +81,6 @@ class RegistrationForm extends AbstractType
                 ),
             'label' => 'Confirm Password'
             )
-        )
-        ->add(
-            'role_id',
-            'hidden',
-            array(
-                'constraints' => array(
-                    new Assert\NotBlank()
-                )
-            )
         );
     }
 

@@ -30,10 +30,10 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            <li><a href="#">My profile</a></li>
+                            <li><a href="{{ url('user_profile') }}">My profile</a></li>
                             <li><a href="{{ url('questions_index') }}">My aswers</a></li>
                             <li><a href="{{ url('my_questions') }}">My questions</a></li>
-                            <li><a href="{{ url('board')  }}">My board</a></li>
+                            <li><a href="{{ url('board_null')  }}">My board</a></li>
                             <li><a href="{{ url('user_index') }}">Users list</a></li>
                         {% endif %}
                     </ul>

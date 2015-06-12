@@ -51,6 +51,8 @@ class UsersController implements ControllerProviderInterface
         $usersController->match('/search', array($this, 'searchAction'))
             ->bind('user_search');
         $usersController->match('/add/', array($this, 'addAction'));
+        $usersController->match('/view', array($this, 'viewAction'))
+            ->bind('user_profile');
         $usersController->match('/edit/{id}', array($this, 'editAction'))
             ->bind('user_edit');
         $usersController->match('/edit/{id}/', array($this, 'editAction'));
@@ -103,7 +105,13 @@ class UsersController implements ControllerProviderInterface
      */
     public function viewAction(Application $app, Request $request)
     {
-        $id = (int)$request->get('id', null);
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        $this->view['userId'] = $boardModel->getUserId($currentUser);
+        $id = (int)$request->get('id', $this->view['userId']);
         $usersModel = new UsersModel($app);
         $this->view['user'] = $usersModel->getUser($id);
         if (!count($this->view['user']))

@@ -38,17 +38,23 @@ class RegistrationModel
      * @param array $data Registration data
      * @retun mixed Result
      */
-    public function addUser($data)
+    public function addUser($app, $data)
     {
-        if ($data['role_id'] === '2') {
+        if ($data['password'] === $data['confirm']) {
+            unset($data['confirm']);
+            $data['password'] = $app['security.encoder.digest']
+                ->encodePassword($data['password'],'');
+            $data['role_id'] = 2;
             return $this->db->insert('users', $data);
+        } else {
+            return array();
         }
     }
 
     public function getUserId()
     {
         $query = 'SELECT id as users_id FROM users ORDER BY users_id DESC LIMIT 1';
-        return $this->db->fetchAll($query);
+        return current($this->db->fetchAll($query));
     }
 
      /* Add user's data.

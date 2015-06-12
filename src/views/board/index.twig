@@ -21,7 +21,7 @@
             <br>
         </div>
     {% endfor %}
-    
+    {% if user|length > 0 %}
     <h2>
         <center>{{ user.login|upper }}</center>
     </h2>
@@ -108,4 +108,10 @@
         </div>
     {% endif %}
     </div>
+    {% else %}
+        <br>
+        <div class="alert alert-danger" role="alert">
+            {{ 'Something went wrong'|trans }}.
+        </div>
+    {% endif %}
 {% endblock %}

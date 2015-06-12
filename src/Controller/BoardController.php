@@ -43,10 +43,10 @@ class BoardController implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $boardController = $app['controllers_factory'];
-       // $boardController = match('/', array($this, 'indexAction'))
-         //   ->bind('board_null');
+        $boardController->match('', array($this, 'indexAction'))
+           ->bind('board_null');
         $boardController->match('/{id}/page/{page}', array($this, 'indexAction'))
-           ->value('id', null)->value('page', 1)->bind('board');
+           ->value('page', 1)->bind('board');
         return $boardController;
     }
 
