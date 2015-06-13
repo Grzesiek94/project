@@ -14,6 +14,7 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Model\UsersModel;
 use Form\UserForm;
+use Form\GrantsForm;
 use Model\BoardModel;
 
 /**
@@ -62,9 +63,9 @@ class UsersController implements ControllerProviderInterface
         $usersController->get('/view/{id}', array($this, 'viewAction'))
             ->bind('user_view');
         $usersController->get('/view/{id}/', array($this, 'viewAction'));
-        $usersController->match('/set_admin/{id}', array($this, 'setAdminAction'))
-            ->bind('set_admin');
-        $usersController->match('/set_admin/{id}/', array($this, 'setAdminAction'));
+        $usersController->match('/set_grants/{id}', array($this, 'setGrantsAction'))
+            ->bind('set_grants');
+        $usersController->match('/set_grants/{id}/', array($this, 'setGrantsAction'));
         $usersController->get('/index', array($this, 'indexAction'));
         $usersController->get('/index/', array($this, 'indexAction'));
         $usersController->get('/{page}', array($this, 'indexAction'))
@@ -253,7 +254,7 @@ class UsersController implements ControllerProviderInterface
      * @param Symfony\Component\HttpFoundation\Request $request Request object
      * @return string Output
      */
-    public function setAdminAction(Application $app, Request $request)
+    public function setGrantsAction(Application $app, Request $request)
     {
         $usersModel = new UsersModel($app);
         $id = (int)$request->get('id', null);
@@ -261,21 +262,16 @@ class UsersController implements ControllerProviderInterface
         
         if (count($user)) {
             $form = $app['form.factory']
-                ->createBuilder(new UserForm(), $user)->getForm();
-            $form->remove('name');
-            $form->remove('surname');
-            $form->remove('email');
-            $form->remove('website');
-            $form->remove('facebook');
+                ->createBuilder(new GrantsForm($app), $user)->getForm();
             $form->handleRequest($request);
 
             if ($form->isValid()) {
                 $data = $form->getData();
-                $usersModel->setAdmin($data);
+                $usersModel->setGrants($data);
                 $app['session']->getFlashBag()->add(
                 'message', array(
                     'type' => 'success', 'content' =>
-                    $app['translator']->trans('New admin added.')
+                    $app['translator']->trans('Grants has been changed.')
                            )
                 );
                 return $app->redirect(
@@ -292,6 +288,6 @@ class UsersController implements ControllerProviderInterface
             );
         }
 
-        return $app['twig']->render('users/setAdmin.twig', $this->view);
+        return $app['twig']->render('users/setGrants.twig', $this->view);
     }
 }

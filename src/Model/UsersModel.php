@@ -229,7 +229,7 @@ class UsersModel
      * @param array $album Album data
      * @retun mixed Result
      */
-    public function setAdmin($user)
+    public function setGrants($user)
     {
         if (isset($user['id'])
             && ($user['id'] != '')
@@ -240,11 +240,22 @@ class UsersModel
             unset($user['name']);
             unset($user['surname']);
             unset($user['email']);
-            unset($user['website']);
             unset($user['facebook']);
-            $user['role_id'] = 1;
+            unset($user['website']);
             return $this->db->update('users', $user, array('id' => $id));
         }
+    }
+
+    /**
+     * Gets all roles.
+     *
+     * @access public
+     * @return array Result
+     */
+    public function getRoles()
+    {
+        $query = 'SELECT id, name as role_id FROM roles';
+        return $this->db->fetchAll($query);
     }
 }
 

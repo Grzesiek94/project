@@ -73,9 +73,7 @@
                                 {% if user.login != currentUser %}
                                     <a href="{{ url('user_delete', {'id': user.id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" alt="delete"></a>
                                 {% endif %}
-                                {% if user.role_id == 2 %}
-                                    <a href="{{ url('set_admin', {'id': user.id}) }}"><img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Apps-system-software-update-icon.png" class="icon" title="set admin"></a>
-                                {% endif %}
+                                <a href="{{ url('set_grants', {'id': user.id}) }}"><img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Apps-system-software-update-icon.png" class="icon" title="set grants"></a>
                             {% endif %}
                         </td>
                 </tr>

@@ -1,0 +1,22 @@
+{# Delete action template for Users controller #}
+{% extends 'base.twig' %}
+
+{% block title %}{{  'set grants'|trans }}{% endblock %}
+
+{% block head %}
+     {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <h1>
+        {{ 'Set grants'|trans }}
+    </h1>
+    <div class="col-md-4">
+    <form action="{{ url('set_grants', {'id':id}) }}" method="post">
+        {{ form_widget(form) }}
+        <br>
+        <input type="submit" class="btn btn-default" name="submit" value="{{ 'Set'|trans }}" />
+	<a href="{{ url('user_index') }}" class="btn btn-danger" >{{ 'BACK'|trans }}</a>
+    </form>
+    </div>
+{% endblock %}
