@@ -10,6 +10,12 @@
 {% endblock %}
 
 {% block content %}
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <br>
+        <div class="alert alert-{{ flashMessage.type }}">
+            {{ flashMessage.content }}
+        </div>
+    {% endfor %}
     {%  if user|length > 0 %}
         <br>
         <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" />
@@ -35,6 +41,7 @@
         <a href="{{ url('user_index') }}" class="btn btn-default">Back to users list</a>
         {% if user.id == userId %}
             <a href="{{ url('user_edit', {'id': user.id}) }}" class="btn btn-default">Edit my profile</a>
+            <a href="{{ url('avatar') }}" class="btn btn-default">Change avatar</a>
         {% endif %}
         <br><br>
     {% else %}

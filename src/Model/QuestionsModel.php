@@ -277,5 +277,50 @@ class QuestionsModel
             return array();
         }
     }
+    /**
+     * Gets single user data.
+     *
+     * @access public
+     * @param integer $id Record Id
+     * @return array Result
+     */
+    public function getIgnored()
+    {
+        $query = 'SELECT
+	    u1.login AS question_login,
+	    ud1.avatar AS question_avatar,
+	    question,
+	    u2.login AS answer_login,
+            ud2.avatar AS answer_avatar
+        FROM
+	    board
+        INNER JOIN
+            users AS u1 on u1.id = users_question_id
+        INNER JOIN
+            users_data AS ud1 on u1.id = ud1.id
+        INNER JOIN
+            users AS u2 on u2.id = users_answer_id
+        INNER JOIN
+            users_data AS ud2 on u2.id = ud2.id
+        WHERE row_ignore = 1
+        AND u1.del = 0
+        AND u2.del = 0
+        ORDER BY board.id DESC';
+        $statement = $this->db->prepare($query);
+        $statement->execute();
+        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        return !$result ? array() : $result;
+    }
+    /* ignore.
+     *
+     * @access public
+     * @param array $data Question data
+     * @retun mixed Result
+     */
+    public function deleteIgnored()
+    {
+        $data['row_ignore'] = 1;
+        return $this->db->delete('board', $data);
+    }
 }
 

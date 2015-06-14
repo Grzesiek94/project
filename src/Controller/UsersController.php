@@ -12,10 +12,12 @@ namespace Controller;
 use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Model\UsersModel;
 use Form\UserForm;
 use Form\GrantsForm;
+use Form\AvatarForm;
+use Model\UsersModel;
 use Model\BoardModel;
+use Model\AvatarModel;
 
 /**
  * Class UsersController.
@@ -68,6 +70,10 @@ class UsersController implements ControllerProviderInterface
         $usersController->match('/set_grants/{id}/', array($this, 'setGrantsAction'));
         $usersController->get('/index', array($this, 'indexAction'));
         $usersController->get('/index/', array($this, 'indexAction'));
+        $usersController->match('/avatar/{id}/', array($this, 'avatarAction'));
+        $usersController->match('/avatar/{id}/', array($this, 'avatarAction'));
+        $usersController->match('/avatar', array($this, 'avatarAction'))
+            ->bind('avatar');
         $usersController->get('/{page}', array($this, 'indexAction'))
                          ->value('page', 1)->bind('user_index');
         return $usersController;
@@ -142,7 +148,6 @@ class UsersController implements ControllerProviderInterface
             $form = $app['form.factory']
                 ->createBuilder(new UserForm(), $user)->getForm();
             $form->handleRequest($request);
-
             if ($form->isValid()) {
                 $data = $form->getData();
                 $usersModel = new UsersModel($app);
@@ -259,7 +264,6 @@ class UsersController implements ControllerProviderInterface
         $usersModel = new UsersModel($app);
         $id = (int)$request->get('id', null);
         $user = $usersModel->getUserDetails($id);
-        
         if (count($user)) {
             $form = $app['form.factory']
                 ->createBuilder(new GrantsForm($app), $user)->getForm();
@@ -267,27 +271,103 @@ class UsersController implements ControllerProviderInterface
 
             if ($form->isValid()) {
                 $data = $form->getData();
-                $usersModel->setGrants($data);
-                $app['session']->getFlashBag()->add(
-                'message', array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('Grants has been changed.')
-                           )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('user_index'), 301
-                );
+                if (count($usersModel->setGrants($data))) {
+                    $app['session']->getFlashBag()->add(
+                    'message', array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('Grants has been changed.')
+                               )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('user_index'), 301
+                    );
+                } else {
+                    $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
+                        $app['translator']->trans('You are the last Admin, first you must choose other.')
+                               )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('user_index'), 301
+                    );
+                }
             }
 
             $this->view['id'] = $id;
             $this->view['form'] = $form->createView();
-
         } else {
             return $app->redirect(
                 $app['url_generator']->generate('user_index'), 301
             );
         }
-
         return $app['twig']->render('users/setGrants.twig', $this->view);
+    }
+    /**
+     * Add action.
+     *
+     * @access public
+     * @param Application $app Silex application
+     * @param Request $request Request object
+     * @return string Output
+     */
+    public function avatarAction(Application $app, Request $request)
+    {
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        $userId = $boardModel->getUserId($currentUser);
+        $id = (int)$request->get('id', $userId);
+        // default values:
+        $data = array();
+        $form = $app['form.factory']
+            ->createBuilder(new AvatarForm(), $data)->getForm();
+        if ($request->isMethod('POST')) {
+            $form->bind($request);
+            if ($form->isValid()) {
+
+                try {
+                    $files = $request->files->get($form->getName());
+                    $mediaPath = dirname(dirname(dirname(__FILE__))).'/web/upload';
+                    $photosModel = new AvatarModel($app);
+                    $photosModel->saveImage($files, $mediaPath, $userId);
+
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success',
+                            'content' => $app['translator']
+                                ->trans('Avatar successfully uploaded.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('user_profile'), 301
+                    );
+                } catch (Exception $e) {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'error',
+                            'content' => $app['translator']
+                                ->trans('Can not upload file.')
+                        )
+                    );
+                }
+            } else {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'error',
+                        'content' => $app['translator']
+                            ->trans('Form contains invalid data.')
+                    )
+                );
+            }
+        }
+        $this->view['form'] = $form->createView();
+        return $app['twig']->render('users/avatar.twig', $this->view);
     }
 }

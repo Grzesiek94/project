@@ -123,6 +123,17 @@ class UsersModel
         return $pagesCount;
     }
 
+    public function countAdmins()
+    {
+        $sql = 'SELECT COUNT(*) as counter FROM users WHERE role_id = 1 AND del = 0';
+        $result = $this->db->fetchAssoc($sql);
+        if ($result) {
+            return (int)$result['counter'];
+        } else {
+            return $array();
+        }
+    }
+
     /**
      * Returns current page number.
      *
@@ -242,8 +253,15 @@ class UsersModel
             unset($user['email']);
             unset($user['facebook']);
             unset($user['website']);
+            if($user['role_id'] == 2) {
+                if($this->countAdmins() > 1) {
+                    return $this->db->update('users', $user, array('id' => $id));
+                } else {
+                    return array();
+                }
+            }
             return $this->db->update('users', $user, array('id' => $id));
-        }
+        } 
     }
 
     /**

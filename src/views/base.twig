@@ -35,6 +35,9 @@
                             <li><a href="{{ url('my_questions') }}">My questions</a></li>
                             <li><a href="{{ url('board_null')  }}">My board</a></li>
                             <li><a href="{{ url('user_index') }}">Users list</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li><a href="{{ url('ignored') }}">Ignored</a></li>
+                            {% endif %}
                         {% endif %}
                     </ul>
                     <ul class="nav navbar-nav navbar-right">

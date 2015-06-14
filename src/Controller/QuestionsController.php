@@ -59,6 +59,11 @@ class QuestionsController implements ControllerProviderInterface
         $questionsController->get('/delete/{id}', array($this, 'deleteAction'));
         $questionsController->match('/delete/{id}', array($this, 'deleteAction'))
                          ->bind('question_delete');
+        $questionsController->match('/ignored', array($this, 'ignoredAction'))
+                         ->bind('ignored');
+        $questionsController->get('/ignored/del', array($this, 'deleteIgnoredAction'));
+        $questionsController->match('/ignored/del', array($this, 'deleteIgnoredAction'))
+                         ->bind('ignored_delete');
         return $questionsController;
     }
 
@@ -326,5 +331,41 @@ class QuestionsController implements ControllerProviderInterface
             );
         }
         return $app['twig']->render('questions/delete.twig', $this->view);
+    }
+    /**
+     * Ignored action.
+     *
+     * @access public
+     * @param Silex\Application $app Silex application
+     * @param Symfony\Component\HttpFoundation\Request $request Request object
+     * @return string Output
+     */
+    public function ignoredAction(Application $app, Request $request)
+    {
+        $questionsModel = new QuestionsModel($app);
+        $this->view['ignored'] = $questionsModel->getIgnored();
+        return $app['twig']->render('questions/ignored.twig', $this->view);
+    }
+    /**
+     * Ignored action.
+     *
+     * @access public
+     * @param Silex\Application $app Silex application
+     * @param Symfony\Component\HttpFoundation\Request $request Request object
+     * @return string Output
+     */
+    public function deleteIgnoredAction(Application $app, Request $request)
+    {
+        $questionsModel = new QuestionsModel($app);
+        $questionsModel->deleteIgnored();
+        $app['session']->getFlashBag()->add(
+            'message', array(
+                'type' => 'success', 'content' =>
+                $app['translator']->trans('All ignored questions have just deleted permanently.')
+                       )
+            );
+            return $app->redirect(
+                $app['url_generator']->generate('ignored'), 301
+            );
     }
 }
