@@ -143,20 +143,4 @@ class LoginModel
             return $roles;
         }
     }
-
-     /* Sign in user.
-     *
-     * @access public
-     * @param array $user User data
-     * @retun mixed Result
-     */
-    public function signIn($user)
-    {
-        if  (($user['role_id'] === '2')
-            && ctype_digit((string)$user['role_id'])) 
-        {
-            return $this->db->insert('users', $user);
-        }
-    }
-
 }

@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Form\UserForm;
 use Form\GrantsForm;
 use Form\AvatarForm;
+use Form\ResetPasswordForm;
 use Model\UsersModel;
 use Model\BoardModel;
 use Model\AvatarModel;
@@ -74,6 +75,10 @@ class UsersController implements ControllerProviderInterface
         $usersController->match('/avatar/{id}/', array($this, 'avatarAction'));
         $usersController->match('/avatar', array($this, 'avatarAction'))
             ->bind('avatar');
+        $usersController->match('/reset_password/{id}/', array($this, 'resetPasswordAction'));
+        $usersController->match('/reset_password/{id}/', array($this, 'resetPasswordAction'));
+        $usersController->match('/reset_password', array($this, 'resetPasswordAction'))
+            ->bind('reset_password');
         $usersController->get('/{page}', array($this, 'indexAction'))
                          ->value('page', 1)->bind('user_index');
         return $usersController;
@@ -273,7 +278,8 @@ class UsersController implements ControllerProviderInterface
                 $data = $form->getData();
                 if (count($usersModel->setGrants($data))) {
                     $app['session']->getFlashBag()->add(
-                    'message', array(
+                    'message',
+                    array(
                         'type' => 'success', 'content' =>
                         $app['translator']->trans('Grants has been changed.')
                                )
@@ -294,7 +300,6 @@ class UsersController implements ControllerProviderInterface
                     );
                 }
             }
-
             $this->view['id'] = $id;
             $this->view['form'] = $form->createView();
         } else {
@@ -369,5 +374,75 @@ class UsersController implements ControllerProviderInterface
         }
         $this->view['form'] = $form->createView();
         return $app['twig']->render('users/avatar.twig', $this->view);
+    }
+    /**
+     * Edit action.
+     *
+     * @access public
+     * @param Silex\Application $app Silex application
+     * @param Symfony\Component\HttpFoundation\Request $request Request object
+     * @return string Output
+     */
+    public function resetPasswordAction(Application $app, Request $request)
+    {
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        $userId = (int)$boardModel->getUserId($currentUser);
+        $id = (int)$request->get('id', $userId);
+        if ($userId === $id) {
+            $form = $app['form.factory']
+                ->createBuilder(new ResetPasswordForm())->getForm();
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $usersModel = new UsersModel($app);
+                $OldPassword = $usersModel->getOldPassword($userId);
+                
+                if (count($usersModel
+                    ->resetPassword($app, $data, $OldPassword, $userId))) {
+                $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'success', 'content' =>
+                    $app['translator']->trans('Password changed.')
+                           )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('user_profile'), 301
+                );
+                } else {
+                $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger', 'content' =>
+                    $app['translator']->trans('Wrong old password or You typed different passwords.')
+                           )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('user_profile'), 301
+                );
+                }
+            }
+
+            $this->view['id'] = $id;
+            $this->view['form'] = $form->createView();
+
+        } else {
+            $app['session']->getFlashBag()->add(
+            'message',
+            array(
+                'type' => 'danger', 'content' =>
+                $app['translator']->trans('Illegal movement.')
+                       )
+            );
+            return $app->redirect(
+                $app['url_generator']->generate('user_index'), 301
+            );
+        }
+
+        return $app['twig']->render('users/resetPassword.twig', $this->view);
     }
 }

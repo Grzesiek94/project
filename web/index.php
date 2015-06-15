@@ -73,6 +73,7 @@ $app->register(
         ),
         'security.access_rules' => array(
             array('^/.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+            array('^/.+$', 'ROLE_USER'),
             array('^/.+$', 'ROLE_ADMIN')
         ),
         'security.role_hierarchy' => array(
@@ -81,12 +82,11 @@ $app->register(
     )
 );
                         
-//var_dump($app['security.encoder.digest']->encodePassword('m', ''));
+
 $app->mount('/user', new Controller\UsersController());
-$app->mount('/', new Controller\IndexController());
 $app->mount('/board', new Controller\BoardController());
 $app->mount('/questions', new Controller\QuestionsController());
 $app->mount('/registration', new Controller\RegistrationController());
-//$app->mount('/manage', new Controller\ManageController());
 $app->mount('auth', new Controller\AuthController());
+$app->mount('/', new Controller\IndexController());
 $app->run();

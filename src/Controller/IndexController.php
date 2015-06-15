@@ -2,8 +2,9 @@
 /**
  * Index controller.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @category Controller
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
  * @copyright EPI 2015
  */
 
@@ -13,12 +14,20 @@ use Silex\Application;
 use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Model\IndexModel;
+use Model\BoardModel;
 
 /**
  * Class IndexController.
  *
  * @package Controller
  * @implements ControllerProviderInterface
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Silex\Application
+ * @uses Silex\ControllerProviderInterface
+ * @uses Symfony\Component\HttpFoundation\Request
+ * @uses Model\IndexModel
+ * @uses Model\BoardModel
  */
 class IndexController implements ControllerProviderInterface
 {
@@ -27,7 +36,7 @@ class IndexController implements ControllerProviderInterface
      * Data for view.
      *
      * @access protected
-     * @var array $_view
+     * @var array $view
      */
     protected $view = array();
 
@@ -36,15 +45,14 @@ class IndexController implements ControllerProviderInterface
      *
      * @access public
      * @param Silex\Application $app Silex application
-     * @return UsersController Result
+     * @return IndexController Result
      */
     public function connect(Application $app)
     {
         $indexController = $app['controllers_factory'];
-        $indexController->match('/add', array($this, 'addAction'))
-            ->bind('user_add');
         $indexController->get('/', array($this, 'indexAction'))
             ->bind('main');
+        $indexController->get('/{param}/', array($this, 'indexAction'));
         return $indexController;
     }
 
@@ -58,8 +66,43 @@ class IndexController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        $userId = $boardModel->getUserId($currentUser);
         $indexModel = new IndexModel($app);
-        $this->view['users'] = $indexModel->getData();
+        $question = $indexModel->haveQuestions($userId);
+        if ($question > 0) {
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'success', 'content' =>
+                    $app['translator']
+                    ->trans('You have new questions to answer!')
+                )
+            );
+        }
+        $data = $indexModel->dataCompleted($userId);
+        if ($data > 0) {
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'success', 'content' =>
+                    $app['translator']
+                    ->trans('You have to fill infromation about Your profile!')
+                )
+            );
+        }
+        $this->view = $indexModel->countUsers();
+        $this->view['bestQuestioning'] = $indexModel->bestQuestioning();
+        $this->view['bestAnswering'] = $indexModel->bestAsnwering();
+        $this->view = array_merge(
+            $this->view,
+            $indexModel->countQuestions(),
+            $indexModel->countAnswers()
+        );
         return $app['twig']->render('index/index.twig', $this->view);
     }
 }

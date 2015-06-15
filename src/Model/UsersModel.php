@@ -275,5 +275,49 @@ class UsersModel
         $query = 'SELECT id, name as role_id FROM roles';
         return $this->db->fetchAll($query);
     }
+
+    /**
+     * Gets user data to edit.
+     *
+     * @access public
+     * @param integer $id Record Id
+     * @return array Result
+     */
+    public function getOldPassword($userId)
+    {
+        if ($userId != '') {
+            $query = 'SELECT password
+                      FROM users
+                      WHERE id = :userId
+                      AND del = 0';
+            $statement = $this->db->prepare($query);
+            $statement->bindValue('userId', $userId, \PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : current($result);
+        } else {
+            return array();
+        }
+    }
+     /* Save album.
+     *
+     * @access public
+     * @param array $album User data
+     * @retun mixed Result
+     */
+    public function resetPassword($app, $data, $OldPassword, $userId)
+    {
+        if ($OldPassword['password'] === $app['security.encoder.digest']
+            ->encodePassword($data['old'], '')
+            && $data['new'] === $data['confirm']) {
+                unset($data['old']);
+                unset($data['confirm']);
+                $data['password'] = $app['security.encoder.digest']
+                    ->encodePassword($data['new'], '');
+                unset($data['new']);
+                return $this->db->update('users', $data, array('id' => $userId));
+        }
+        return array();
+    }
 }
 

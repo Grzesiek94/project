@@ -91,7 +91,8 @@ $boardModel = new BoardModel($app);
             $data['users_question_id'] = (int)$boardModel->getUserId($currentUser);
             $boardModel->askQuestion($data);
             $app['session']->getFlashBag()->add(
-                'message', array(
+                'message',
+                array(
                     'type' => 'success', 'content' => 
                     $app['translator']->trans('Question added.')
                 )

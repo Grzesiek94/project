@@ -77,7 +77,8 @@ class RegistrationController implements ControllerProviderInterface
                 $app['session']->getFlashBag()->add(
                     'message', array(
                         'type' => 'success', 'content' => 
-                        $app['translator']->trans('Account created correctly. Now You can log in to your account.')
+                        $app['translator']
+                            ->trans('Account created correctly. Now You can log in to your account.')
                     )
                 );
                 return $app->redirect(
