@@ -2,8 +2,9 @@
 /**
  * Board controller.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @category Controller
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
  * @copyright EPI 2015
  */
 
@@ -21,6 +22,14 @@ use Model\UsersModel;
  *
  * @package Controller
  * @implements ControllerProviderInterface
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Silex\Application
+ * @uses Silex\ControllerProviderInterface
+ * @uses Symfony\Component\HttpFoundation\Request
+ * @uses Model\BoardModel
+ * @uses Form\BoardForm
+ * @uses Model\UsersModel
  */
 class BoardController implements ControllerProviderInterface
 {
@@ -61,17 +70,17 @@ class BoardController implements ControllerProviderInterface
     public function indexAction(Application $app, Request $request)
     {
         $pageLimit = 15;
-$token = $app['security']->getToken();
-if (null !== $token) {
-$currentUser = $token->getUsername();
-}
-$boardModel = new BoardModel($app);
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
         $id = (int)$request->get('id', $boardModel->getUserId($currentUser));
         $page = (int) $request->get('page', 1);
         $this->view['user_id'] = $id;
-        $boardModel = new BoardModel($app);
         $this->view = array_merge(
-            $this->view, $boardModel->getPaginatedQuestions($page, $pageLimit, $id)
+            $this->view,
+            $boardModel->getPaginatedQuestions($page, $pageLimit, $id)
         );
         $usersModel = new UsersModel($app);
         $this->view['user'] = $usersModel->getUser($id);
@@ -87,13 +96,12 @@ $boardModel = new BoardModel($app);
             if (null !== $token) {
                 $currentUser = $token->getUsername();
             }
-            $boardModel = new BoardModel($app);
             $data['users_question_id'] = (int)$boardModel->getUserId($currentUser);
             $boardModel->askQuestion($data);
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
-                    'type' => 'success', 'content' => 
+                    'type' => 'success', 'content' =>
                     $app['translator']->trans('Question added.')
                 )
             );
@@ -101,10 +109,7 @@ $boardModel = new BoardModel($app);
                 $app['request']->getUri()
             );
         }
-
         $this->view['form'] = $form->createView();
-//var_dump($this->view);
         return $app['twig']->render('board/index.twig', $this->view);
     }
- 
 }

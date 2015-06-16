@@ -70,7 +70,20 @@ class RegistrationController implements ControllerProviderInterface
         if ($form->isValid()) {
             $data = $form->getData();
             $registrationModel = new RegistrationModel($app);
-            $register = $registrationModel->addUser($app, $data);
+            if (count($registrationModel->isUnique($data))) {
+                $register = $registrationModel->addUser($app, $data);
+            } else {
+                $app['session']->getFlashBag()->add(
+                    'message', array(
+                        'type' => 'danger', 'content' => 
+                        $app['translator']
+                            ->trans('Someone uses this login. Try other.')
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('registration'), 301
+                );
+            }
             if (count($register)) {
                 $details = $registrationModel->getUserId();
                 $registrationModel->addUserData($details);

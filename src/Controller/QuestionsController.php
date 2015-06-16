@@ -2,8 +2,9 @@
 /**
  * Questions controller.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @category Controller
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
  * @copyright EPI 2015
  */
 
@@ -17,10 +18,18 @@ use Model\BoardModel;
 use Form\QuestionForm;
 
 /**
- * Class QuestionsController.
+ * Class IndexController.
  *
  * @package Controller
  * @implements ControllerProviderInterface
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Silex\Application
+ * @uses Silex\ControllerProviderInterface
+ * @uses Symfony\Component\HttpFoundation\Request
+ * @uses Model\QuestionsModel
+ * @uses Model\BoardModel
+ * @uses Form\QuestionForm
  */
 class QuestionsController implements ControllerProviderInterface
 {
@@ -29,7 +38,7 @@ class QuestionsController implements ControllerProviderInterface
      * Data for view.
      *
      * @access protected
-     * @var array $_view
+     * @var array $view
      */
     protected $view = array();
 
@@ -118,10 +127,11 @@ class QuestionsController implements ControllerProviderInterface
                 $data = $form->getData();
                 $questionsModel->edit($data);
                 $app['session']->getFlashBag()->add(
-                'message', array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('Answer added correctly.')
-                            )
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('Answer added correctly.')
+                    )
                 );
                 return $app->redirect(
                     $app['url_generator']->generate('questions_index'), 301
@@ -133,10 +143,12 @@ class QuestionsController implements ControllerProviderInterface
 
         } else {
             $app['session']->getFlashBag()->add(
-            'message', array(
-                'type' => 'danger', 'content' =>
-                $app['translator']->trans('You tried to make something illegal! Be care.')
-                        )
+                'message',
+                array(
+                    'type' => 'danger', 'content' =>
+                    $app['translator']
+                        ->trans('You tried to make something illegal! Be care.')
+                )
             );
             return $app->redirect(
                 $app['url_generator']->generate('questions_index'), 301
@@ -167,7 +179,7 @@ class QuestionsController implements ControllerProviderInterface
     }
 
     /**
-     * edit question action.
+     * Edit question action.
      *
      * @access public
      * @param Silex\Application $app Silex application
@@ -196,10 +208,11 @@ class QuestionsController implements ControllerProviderInterface
                 $data = $form->getData();
                 $questionsModel->edit($data);
                 $app['session']->getFlashBag()->add(
-                'message', array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('Question edited.')
-                            )
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('Question edited.')
+                    )
                 );
                 return $app->redirect(
                     $app['url_generator']->generate('my_questions'), 301
@@ -211,10 +224,12 @@ class QuestionsController implements ControllerProviderInterface
 
         } else {
             $app['session']->getFlashBag()->add(
-            'message', array(
-                'type' => 'danger', 'content' =>
-                $app['translator']->trans('You tried to make something illegal! Be care.')
-                        )
+                'message',
+                array(
+                    'type' => 'danger', 'content' =>
+                    $app['translator']
+                        ->trans('You tried to make something illegal! Be care.')
+                )
             );
             return $app->redirect(
                 $app['url_generator']->generate('my_questions'), 301
@@ -224,7 +239,7 @@ class QuestionsController implements ControllerProviderInterface
     }
 
     /**
-     * ignore action.
+     * Ignore action.
      *
      * @access public
      * @param Silex\Application $app Silex application
@@ -253,10 +268,11 @@ class QuestionsController implements ControllerProviderInterface
                 $data = $form->getData();
                 $questionsModel->ignore($data);
                 $app['session']->getFlashBag()->add(
-                'message', array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('Question ignored.')
-                            )
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('Question ignored.')
+                    )
                 );
                 return $app->redirect(
                     $app['url_generator']->generate('questions_index'), 301
@@ -268,10 +284,11 @@ class QuestionsController implements ControllerProviderInterface
 
         } else {
             $app['session']->getFlashBag()->add(
-            'message', array(
-                'type' => 'danger', 'content' =>
-                $app['translator']->trans('You tried to make something illegal! Be care.')
-                        )
+                'message',
+                array(
+                    'type' => 'danger', 'content' =>
+                    $app['translator']->trans('You tried to make something illegal! Be care.')
+                )
             );
             return $app->redirect(
                 $app['url_generator']->generate('questions_index'), 301
@@ -306,13 +323,15 @@ class QuestionsController implements ControllerProviderInterface
                 $data = $form->getData();
                 $questionsModel->delete($data);
                 $app['session']->getFlashBag()->add(
-                'message', array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('Question deleted.')
-                            )
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('Question deleted.')
+                    )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('board', array('id' => $redirect)), 301
+                    $app['url_generator']
+                        ->generate('board', array('id' => $redirect)), 301
                 );
             }
 
@@ -321,10 +340,12 @@ class QuestionsController implements ControllerProviderInterface
 
         } else {
             $app['session']->getFlashBag()->add(
-            'message', array(
-                'type' => 'danger', 'content' =>
-                $app['translator']->trans('You tried to make something illegal! Be care.')
-                        )
+                'message',
+                array(
+                    'type' => 'danger', 'content' =>
+                    $app['translator']
+                        ->trans('You tried to make something illegal! Be care.')
+                )
             );
             return $app->redirect(
                 $app['url_generator']->generate('user_index'), 301
@@ -359,11 +380,13 @@ class QuestionsController implements ControllerProviderInterface
         $questionsModel = new QuestionsModel($app);
         $questionsModel->deleteIgnored();
         $app['session']->getFlashBag()->add(
-            'message', array(
+            'message',
+            array(
                 'type' => 'success', 'content' =>
-                $app['translator']->trans('All ignored questions have just deleted permanently.')
-                       )
-            );
+                $app['translator']
+                    ->trans('All ignored questions have just deleted permanently.')
+            )
+        );
             return $app->redirect(
                 $app['url_generator']->generate('ignored'), 301
             );

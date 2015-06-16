@@ -67,5 +67,26 @@ class RegistrationModel
     {
         return $this->db->insert('users_data', $data);
     }
+    /**
+     * Gets information about best users.
+     *
+     * @access public
+     * @return array Result
+     */
+    public function isUnique($data)
+    {
+        $query = '
+	    SELECT 
+                COUNT(login) as isUnique
+            FROM 
+                users
+            WHERE
+                login = :login
+	';
+        $statement = $this->db->prepare($query);
+        $statement->bindValue('login', $data['login'], \PDO::PARAM_STR);
+        $statement->execute();
+        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        return $result[0]['isUnique'] > 0 ? array() : $result;
+    }
 }
-

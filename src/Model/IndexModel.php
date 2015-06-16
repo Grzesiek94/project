@@ -108,19 +108,19 @@ class IndexModel
     {
         $query = '
 	    SELECT 
-              avatar,
-              login,
-              COUNT(users_question_id) AS best
-          FROM 
-              users 
-          INNER JOIN
-              board ON users_question_id = users.id 
-          INNER JOIN
-              users_data ON users.id = users_data.id
-          GROUP BY 
-              users_question_id 
-          ORDER BY
-              best DESC LIMIT 3
+                avatar,
+                login,
+                COUNT(users_question_id) AS best
+            FROM 
+                users 
+            INNER JOIN
+                board ON users_question_id = users.id 
+            INNER JOIN
+                users_data ON users.id = users_data.id
+            GROUP BY 
+                users_question_id 
+            ORDER BY
+                best DESC LIMIT 3
 	';
         $statement = $this->db->prepare($query);
         $statement->execute();
@@ -136,22 +136,24 @@ class IndexModel
      */
     public function bestAsnwering()
     {
-        $query = 'SELECT
-                      avatar,
-                      login,
-                      COUNT(users_answer_id) AS best
-                  FROM
-                      users
-                  INNER JOIN
-                      board ON users_answer_id = users.id
-                  INNER JOIN
-                      users_data ON users.id = users_data.id
-                  WHERE 
-                      answer IS NOT NULL
-                  GROUP BY
-                      users_answer_id
-                  ORDER BY
-                      best DESC LIMIT 3';
+        $query = '
+            SELECT
+                avatar,
+                login,
+                COUNT(users_answer_id) AS best
+            FROM
+                users
+            INNER JOIN
+                board ON users_answer_id = users.id
+            INNER JOIN
+                users_data ON users.id = users_data.id
+            WHERE 
+                answer IS NOT NULL
+            GROUP BY
+                users_answer_id
+            ORDER BY
+                best DESC LIMIT 3
+        ';
         $statement = $this->db->prepare($query);
         $statement->execute();
         $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -167,16 +169,18 @@ class IndexModel
      */
     public function haveQuestions($id)
     {
-        $query = 'SELECT
-                      COUNT(*) AS counter
-                  FROM
-                      board
-                  WHERE
-                      users_answer_id = :id
-                  AND
-                      row_ignore = 0
-                  AND 
-                      answer IS NULL';
+        $query = '
+            SELECT
+                COUNT(*) AS counter
+            FROM
+                board
+            WHERE
+                users_answer_id = :id
+            AND
+                row_ignore = 0
+            AND 
+                answer IS NULL
+        ';
         $statement = $this->db->prepare($query);
         $statement->bindValue('id', $id, \PDO::PARAM_INT);
         $statement->execute();
@@ -193,23 +197,24 @@ class IndexModel
      */
     public function dataCompleted($id)
     {
-        $query = 'SELECT 
-                      *
-                  FROM
-                      users_data
-                  WHERE
-                      users_id = :id
-                  AND (
-                      name IS NULL
-                  OR 
-                      surname is NULL
-                  OR
-                      email IS NULL
-                  OR
-                      website IS NULL
-                  OR
-                      facebook IS NULL
-                  )';
+        $query = '
+            SELECT 
+                *
+            FROM
+                users_data
+            WHERE
+                users_id = :id
+            AND (
+                name IS NULL
+            OR 
+                surname is NULL
+            OR
+                email IS NULL
+            OR
+                website IS NULL
+            OR
+                facebook IS NULL
+        )';
         $statement = $this->db->prepare($query);
         $statement->bindValue('id', $id, \PDO::PARAM_INT);
         $statement->execute();

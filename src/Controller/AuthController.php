@@ -2,9 +2,10 @@
 /**
  * Auth controller.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Controller
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
 
 namespace Controller;
@@ -19,6 +20,12 @@ use Form\LoginForm;
  *
  * @package Controller
  * @implements ControllerProviderInterface
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Silex\Application
+ * @uses Silex\ControllerProviderInterface
+ * @uses Symfony\Component\HttpFoundation\Request
+ * @uses Form\LoginForm
  */
 class AuthController implements ControllerProviderInterface
 {
@@ -40,10 +47,12 @@ class AuthController implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $authController = $app['controllers_factory'];
+        $authController->match('login/', array($this, 'loginAction'));
         $authController->match('login', array($this, 'loginAction'))
             ->bind('auth_login');
         $authController->get('logout', array($this, 'logoutAction'))
             ->bind('auth_logout');
+        $authController->match('{param}', array($this, 'loginAction'));
         return $authController;
     }
 
