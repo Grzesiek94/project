@@ -2,9 +2,10 @@
 /**
  * Question form.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Form
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
 
 namespace Form;
@@ -15,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class UserForm.
+ * Class QuestionForm.
  *
  * @category Epi
  * @package Form
@@ -41,11 +42,11 @@ class QuestionForm extends AbstractType
     {
         return $builder
         ->add(
-            'id', 
+            'id',
             'hidden'
         )
         ->add(
-            'answer', 
+            'answer',
             'text',
             array(
                 'constraints' => array(
@@ -56,11 +57,11 @@ class QuestionForm extends AbstractType
                         'class' => 'form-control',
                         'placeholder' => 'Answer me!'
                 ),
-            'label' => false
+                'label' => false
             )
         )
         ->add(
-            'question', 
+            'question',
             'text',
             array(
                 'constraints' => array(
@@ -71,7 +72,7 @@ class QuestionForm extends AbstractType
                         'class' => 'form-control',
                         'placeholder' => 'Change question'
                 ),
-            'label' => false
+                'label' => false
             )
         );
     }
@@ -87,5 +88,4 @@ class QuestionForm extends AbstractType
     {
         return 'questionForm';
     }
-
 }

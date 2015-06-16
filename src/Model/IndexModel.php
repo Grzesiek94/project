@@ -1,8 +1,8 @@
 <?php
 /**
- * Index controller.
+ * Index model.
  *
- * @category Controller
+ * @category Model
  * @author Grzegorz Stefański
  * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
  * @copyright EPI 2015

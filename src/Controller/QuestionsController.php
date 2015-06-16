@@ -18,7 +18,7 @@ use Model\BoardModel;
 use Form\QuestionForm;
 
 /**
- * Class IndexController.
+ * Class QuestionsController.
  *
  * @package Controller
  * @implements ControllerProviderInterface
@@ -134,7 +134,8 @@ class QuestionsController implements ControllerProviderInterface
                     )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('questions_index'), 301
+                    $app['url_generator']->generate('questions_index'),
+                    301
                 );
             }
 
@@ -151,7 +152,8 @@ class QuestionsController implements ControllerProviderInterface
                 )
             );
             return $app->redirect(
-                $app['url_generator']->generate('questions_index'), 301
+                $app['url_generator']->generate('questions_index'),
+                301
             );
         }
         return $app['twig']->render('questions/answer.twig', $this->view);
@@ -215,7 +217,8 @@ class QuestionsController implements ControllerProviderInterface
                     )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('my_questions'), 301
+                    $app['url_generator']->generate('my_questions'),
+                    301
                 );
             }
 
@@ -232,7 +235,8 @@ class QuestionsController implements ControllerProviderInterface
                 )
             );
             return $app->redirect(
-                $app['url_generator']->generate('my_questions'), 301
+                $app['url_generator']->generate('my_questions'),
+                301
             );
         }
         return $app['twig']->render('questions/edit.twig', $this->view);
@@ -275,7 +279,8 @@ class QuestionsController implements ControllerProviderInterface
                     )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('questions_index'), 301
+                    $app['url_generator']->generate('questions_index'),
+                    301
                 );
             }
 
@@ -287,11 +292,13 @@ class QuestionsController implements ControllerProviderInterface
                 'message',
                 array(
                     'type' => 'danger', 'content' =>
-                    $app['translator']->trans('You tried to make something illegal! Be care.')
+                    $app['translator']
+                        ->trans('You tried to make something illegal! Be care.')
                 )
             );
             return $app->redirect(
-                $app['url_generator']->generate('questions_index'), 301
+                $app['url_generator']->generate('questions_index'),
+                301
             );
         }
         return $app['twig']->render('questions/ignore.twig', $this->view);
@@ -331,7 +338,8 @@ class QuestionsController implements ControllerProviderInterface
                 );
                 return $app->redirect(
                     $app['url_generator']
-                        ->generate('board', array('id' => $redirect)), 301
+                    ->generate('board', array('id' => $redirect)),
+                    301
                 );
             }
 
@@ -348,7 +356,8 @@ class QuestionsController implements ControllerProviderInterface
                 )
             );
             return $app->redirect(
-                $app['url_generator']->generate('user_index'), 301
+                $app['url_generator']->generate('user_index'),
+                301
             );
         }
         return $app['twig']->render('questions/delete.twig', $this->view);
@@ -388,7 +397,8 @@ class QuestionsController implements ControllerProviderInterface
             )
         );
             return $app->redirect(
-                $app['url_generator']->generate('ignored'), 301
+                $app['url_generator']->generate('ignored'),
+                301
             );
     }
 }

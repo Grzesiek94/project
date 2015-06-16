@@ -2,11 +2,11 @@
 /**
  * Board form.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Form
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
-
 namespace Form;
 
 use Silex\Application;
@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Model\BoardModel;
 
 /**
- * Class UserForm.
+ * Class BoardForm.
  *
  * @category Epi
  * @package Form
@@ -45,11 +45,11 @@ class BoardForm extends AbstractType
     {
         return $builder
         ->add(
-            'users_question_id', 
+            'users_question_id',
             'hidden'
         )
         ->add(
-            'question', 
+            'question',
             'text',
             array(
                 'constraints' => array(
@@ -60,11 +60,11 @@ class BoardForm extends AbstractType
                         'class' => 'form-control',
                         'placeholder' => 'Ask a question'
                 ),
-            'label' => false
+                'label' => false
             )
         )
         ->add(
-            'users_answer_id', 
+            'users_answer_id',
             'hidden'
         );
     }
@@ -80,5 +80,4 @@ class BoardForm extends AbstractType
     {
         return 'boardForm';
     }
-
 }

@@ -1,10 +1,11 @@
 <?php
 /**
- * Photos model.
+ * Avatar model.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Model
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
 
 namespace Model;
@@ -12,11 +13,12 @@ namespace Model;
 use Silex\Application;
 
 /**
- * Class PhotosModel.
+ * Class AvatarModel.
  *
- * @category Epi
  * @package Model
- * @use Silex\Application
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Silex\Application
  */
 class AvatarModel
 {
@@ -45,6 +47,7 @@ class AvatarModel
      * @access public
      * @param array $image Image data from request
      * @param string $mediaPath Path to media folder on disk
+     * @param integer $id Current user's id
      * @throws \PDOException
      * @return mixed Result
      */
@@ -66,6 +69,7 @@ class AvatarModel
      *
      * @access protected
      * @param string $name Filename
+     * @param integer $id Current user's id
      * @return mixed Result
      */
     protected function saveFilename($name, $id)
@@ -79,7 +83,7 @@ class AvatarModel
      *
      * @access protected
      * @param string $name Source filename
-     *
+     * @param integer $id Current user's id
      * @return string Result
      */
     protected function createName($name, $id)

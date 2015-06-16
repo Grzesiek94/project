@@ -2,8 +2,9 @@
 /**
  * Registration controller.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @category Controller
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
  * @copyright EPI 2015
  */
 
@@ -20,6 +21,13 @@ use Form\RegistrationForm;
  *
  * @package Controller
  * @implements ControllerProviderInterface
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Silex\Application
+ * @uses Silex\ControllerProviderInterface
+ * @uses Symfony\Component\HttpFoundation\Request
+ * @uses Model\RegistrationModel
+ * @uses Form\RegistrationForm
  */
 class RegistrationController implements ControllerProviderInterface
 {
@@ -28,7 +36,7 @@ class RegistrationController implements ControllerProviderInterface
      * Data for view.
      *
      * @access protected
-     * @var array $_view
+     * @var array $view
      */
     protected $view = array();
 
@@ -37,7 +45,7 @@ class RegistrationController implements ControllerProviderInterface
      *
      * @access public
      * @param Silex\Application $app Silex application
-     * @return UsersController Result
+     * @return RegistrationController Result
      */
     public function connect(Application $app)
     {
@@ -57,11 +65,7 @@ class RegistrationController implements ControllerProviderInterface
      */
     public function registerAction(Application $app, Request $request)
     {
-        $data = array(
-            'login' => '',
-            'password' => '',
-            'confirm' => '',
-        );
+        $data = array();
         $form = $app['form.factory']
             ->createBuilder(new RegistrationForm(), $data)->getForm();
         
@@ -74,40 +78,45 @@ class RegistrationController implements ControllerProviderInterface
                 $register = $registrationModel->addUser($app, $data);
             } else {
                 $app['session']->getFlashBag()->add(
-                    'message', array(
-                        'type' => 'danger', 'content' => 
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
                         $app['translator']
                             ->trans('Someone uses this login. Try other.')
                     )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('registration'), 301
+                    $app['url_generator']->generate('registration'),
+                    301
                 );
             }
             if (count($register)) {
                 $details = $registrationModel->getUserId();
                 $registrationModel->addUserData($details);
                 $app['session']->getFlashBag()->add(
-                    'message', array(
-                        'type' => 'success', 'content' => 
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
                         $app['translator']
                             ->trans('Account created correctly. Now You can log in to your account.')
                     )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('main'), 301
+                    $app['url_generator']->generate('main'),
+                    301
                 );
             } else {
                 $app['session']->getFlashBag()->add(
-                    'message', array(
-                        'type' => 'danger', 'content' => 
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
                         $app['translator']->trans('You typed different passwords! Try again.')
                     )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('registration'), 301
+                    $app['url_generator']->generate('registration'),
+                    301
                 );
-
             }
         }
 

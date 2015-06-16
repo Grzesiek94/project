@@ -1,10 +1,11 @@
 <?php
 /**
- * Album form.
+ * Grants form.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Form
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
 
 namespace Form;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Model\UsersModel;
 
 /**
- * Class AlbumForm.
+ * Class GratnsForm.
  *
  * @category Epi
  * @package Form
@@ -92,7 +93,7 @@ class GrantsForm extends AbstractType
                 'attr' => array(
                         'class' => 'form-control'
                 ),
-            'label' => 'Set role'
+                'label' => 'Set role'
             )
         );
 

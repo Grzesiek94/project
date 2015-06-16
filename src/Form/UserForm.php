@@ -2,11 +2,11 @@
 /**
  * User form.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Form
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
-
 namespace Form;
 
 use Silex\Application;
@@ -45,7 +45,7 @@ class UserForm extends AbstractType
     {
         return $builder
         ->add(
-            'id', 
+            'id',
             'hidden',
             array(
                 'constraints' => array(
@@ -55,7 +55,7 @@ class UserForm extends AbstractType
             )
         )
         ->add(
-            'name', 
+            'name',
             'text',
             array(
                 'constraints' => array(
@@ -69,7 +69,7 @@ class UserForm extends AbstractType
             )
         )
         ->add(
-            'surname', 
+            'surname',
             'text',
             array(
                 'constraints' => array(
@@ -84,7 +84,7 @@ class UserForm extends AbstractType
         )
         ->add(
             'email',
-            'text', 
+            'text',
             array(
                 'constraints' => new Assert\Email(),
                 'attr' => array(
@@ -92,10 +92,9 @@ class UserForm extends AbstractType
                         'placeholder' => 'e-mail'
                 ),
             )
-
         )
         ->add(
-            'website', 
+            'website',
             'text',
             array(
                 'constraints' => array(
@@ -108,7 +107,7 @@ class UserForm extends AbstractType
             )
         )
         ->add(
-            'facebook', 
+            'facebook',
             'text',
             array(
                 'constraints' => array(
@@ -134,5 +133,4 @@ class UserForm extends AbstractType
     {
         return 'userForm';
     }
-
 }

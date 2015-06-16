@@ -1,10 +1,11 @@
 <?php
 /**
- * Log in form.
+ * Registration form.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Form
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
 
 namespace Form;
@@ -15,7 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class LoginForm.
+ * Class RegistrationForm.
  *
  * @category Epi
  * @package Form
@@ -79,7 +80,7 @@ class RegistrationForm extends AbstractType
                         'class' => 'form-control',
                         'placeholder' => 'Confirm Password'
                 ),
-            'label' => 'Confirm Password'
+                'label' => 'Confirm Password'
             )
         );
     }

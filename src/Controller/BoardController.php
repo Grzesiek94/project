@@ -47,7 +47,7 @@ class BoardController implements ControllerProviderInterface
      *
      * @access public
      * @param Silex\Application $app Silex application
-     * @return UsersController Result
+     * @return BoardController Result
      */
     public function connect(Application $app)
     {

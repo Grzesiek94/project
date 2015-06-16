@@ -75,9 +75,9 @@ $app->register(
             array('^/auth.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
             array('^/registration/$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
             array('^/user/search.*$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
-            array('^/board/?[1-9]*/?(page)?/?[1-9]*$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
-            array('^/user/?(avatar|reset_password|edit|view/?[1-9]*)?/?$', 'ROLE_USER'),
-            array('^/questions/?(ignore|my|answer)?/?(edit)?/?[1-9]*/?$', 'ROLE_USER'),
+            array('^/board/?[0-9]*/?(page)?/?[0-9]*$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
+            array('^/user/?(avatar|reset_password|edit|view/?[0-9]*)?/?$', 'ROLE_USER'),
+            array('^/questions/?(ignore|my|answer)?/?(edit)?/?[0-9]*/?$', 'ROLE_USER'),
             array('^/.+$', 'ROLE_ADMIN')
         ),
         'security.role_hierarchy' => array(

@@ -2,8 +2,9 @@
 /**
  * Users controller.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @category Controller
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
  * @copyright EPI 2015
  */
 
@@ -25,6 +26,18 @@ use Model\AvatarModel;
  *
  * @package Controller
  * @implements ControllerProviderInterface
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Silex\Application
+ * @uses Silex\ControllerProviderInterface
+ * @uses Symfony\Component\HttpFoundation\Request
+ * @uses Form\UserForm
+ * @uses Form\GrantsForm
+ * @uses Form\AvatarForm
+ * @uses Form\ResetPasswordForm
+ * @uses Model\UsersModel
+ * @uses Model\BoardModel
+ * @uses Model\AvatarModel
  */
 class UsersController implements ControllerProviderInterface
 {
@@ -33,7 +46,7 @@ class UsersController implements ControllerProviderInterface
      * Data for view.
      *
      * @access protected
-     * @var array $_view
+     * @var array $view
      */
     protected $view = array();
 
@@ -104,7 +117,8 @@ class UsersController implements ControllerProviderInterface
             $this->view['currentUser'] = $token->getUsername();
         }
         $this->view = array_merge(
-            $this->view, $usersModel->getPaginatedUsers($page, $pageLimit)
+            $this->view,
+            $usersModel->getPaginatedUsers($page, $pageLimit)
         );
         return $app['twig']->render('users/index.twig', $this->view);
     }
@@ -128,10 +142,10 @@ class UsersController implements ControllerProviderInterface
         $id = (int)$request->get('id', $this->view['userId']);
         $usersModel = new UsersModel($app);
         $this->view['user'] = $usersModel->getUser($id);
-        if (!count($this->view['user']))
-        {
+        if (!count($this->view['user'])) {
             return $app->redirect(
-                $app['url_generator']->generate('user_index'), 301
+                $app['url_generator']->generate('user_index'),
+                301
             );
         }
         return $app['twig']->render('users/view.twig', $this->view);
@@ -164,13 +178,15 @@ class UsersController implements ControllerProviderInterface
                 $data = $form->getData();
                 $usersModel->editUser($data);
                 $app['session']->getFlashBag()->add(
-                'message', array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('Data edited.')
-                           )
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('Data edited.')
+                    )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('user_index'), 301
+                    $app['url_generator']->generate('user_index'),
+                    301
                 );
             }
 
@@ -179,7 +195,8 @@ class UsersController implements ControllerProviderInterface
 
         } else {
             return $app->redirect(
-                $app['url_generator']->generate('user_index'), 301
+                $app['url_generator']->generate('user_index'),
+                301
             );
         }
         return $app['twig']->render('users/edit.twig', $this->view);
@@ -219,13 +236,15 @@ class UsersController implements ControllerProviderInterface
                 $data = $form->getData();
                 $usersModel->deleteUser($data);
                 $app['session']->getFlashBag()->add(
-                'message', array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('User deleted.')
-                           )
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('User deleted.')
+                    )
                 );
                 return $app->redirect(
-                    $app['url_generator']->generate('user_index'), 301
+                    $app['url_generator']->generate('user_index'),
+                    301
                 );
             }
 
@@ -234,7 +253,8 @@ class UsersController implements ControllerProviderInterface
 
         } else {
             return $app->redirect(
-                $app['url_generator']->generate('user_index'), 301
+                $app['url_generator']->generate('user_index'),
+                301
             );
         }
 
@@ -262,7 +282,7 @@ class UsersController implements ControllerProviderInterface
     }
 
     /**
-     * Delete action.
+     * Set grants action.
      *
      * @access public
      * @param Silex\Application $app Silex application
@@ -271,8 +291,6 @@ class UsersController implements ControllerProviderInterface
      */
     public function setGrantsAction(Application $app, Request $request)
     {
-var_dump($app['security']->getToken());
-
         $usersModel = new UsersModel($app);
         $id = (int)$request->get('id', null);
         $user = $usersModel->getUserDetails($id);
@@ -285,25 +303,28 @@ var_dump($app['security']->getToken());
                 $data = $form->getData();
                 if (count($usersModel->setGrants($data))) {
                     $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']->trans('Grants has been changed.')
-                               )
+                        'message',
+                        array(
+                            'type' => 'success', 'content' =>
+                            $app['translator']->trans('Grants has been changed.')
+                        )
                     );
                     return $app->redirect(
-                        $app['url_generator']->generate('user_index'), 301
+                        $app['url_generator']->generate('user_index'),
+                        301
                     );
                 } else {
                     $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'danger', 'content' =>
-                        $app['translator']->trans('You are the last Admin, first you must choose other.')
-                               )
+                        'message',
+                        array(
+                            'type' => 'danger', 'content' =>
+                            $app['translator']
+                                ->trans('You are the last Admin, first you must choose other.')
+                        )
                     );
                     return $app->redirect(
-                        $app['url_generator']->generate('user_index'), 301
+                        $app['url_generator']->generate('user_index'),
+                        301
                     );
                 }
             }
@@ -311,13 +332,14 @@ var_dump($app['security']->getToken());
             $this->view['form'] = $form->createView();
         } else {
             return $app->redirect(
-                $app['url_generator']->generate('user_index'), 301
+                $app['url_generator']->generate('user_index'),
+                301
             );
         }
         return $app['twig']->render('users/setGrants.twig', $this->view);
     }
     /**
-     * Add action.
+     * Avatar action.
      *
      * @access public
      * @param Application $app Silex application
@@ -333,14 +355,13 @@ var_dump($app['security']->getToken());
         $boardModel = new BoardModel($app);
         $userId = $boardModel->getUserId($currentUser);
         $id = (int)$request->get('id', $userId);
-        // default values:
+
         $data = array();
         $form = $app['form.factory']
             ->createBuilder(new AvatarForm(), $data)->getForm();
         if ($request->isMethod('POST')) {
             $form->bind($request);
             if ($form->isValid()) {
-
                 try {
                     $files = $request->files->get($form->getName());
                     $mediaPath = dirname(dirname(dirname(__FILE__))).'/web/upload';
@@ -356,7 +377,8 @@ var_dump($app['security']->getToken());
                         )
                     );
                     return $app->redirect(
-                        $app['url_generator']->generate('user_profile'), 301
+                        $app['url_generator']->generate('user_profile'),
+                        301
                     );
                 } catch (Exception $e) {
                     $app['session']->getFlashBag()->add(
@@ -383,7 +405,7 @@ var_dump($app['security']->getToken());
         return $app['twig']->render('users/avatar.twig', $this->view);
     }
     /**
-     * Edit action.
+     * Reset password action.
      *
      * @access public
      * @param Silex\Application $app Silex application
@@ -410,27 +432,29 @@ var_dump($app['security']->getToken());
                 
                 if (count($usersModel
                     ->resetPassword($app, $data, $OldPassword, $userId))) {
-                $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('Password changed.')
-                           )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('user_profile'), 301
-                );
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success', 'content' =>
+                            $app['translator']->trans('Password changed.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('user_profile'),
+                        301
+                    );
                 } else {
-                $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'danger', 'content' =>
-                    $app['translator']->trans('Wrong old password or You typed different passwords.')
-                           )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('user_profile'), 301
-                );
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger', 'content' =>
+                            $app['translator']->trans('Wrong old password or You typed different passwords.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('user_profile'),
+                        301
+                    );
                 }
             }
 
@@ -439,14 +463,15 @@ var_dump($app['security']->getToken());
 
         } else {
             $app['session']->getFlashBag()->add(
-            'message',
-            array(
-                'type' => 'danger', 'content' =>
-                $app['translator']->trans('Illegal movement.')
-                       )
+                'message',
+                array(
+                    'type' => 'danger', 'content' =>
+                    $app['translator']->trans('Illegal movement.')
+                )
             );
             return $app->redirect(
-                $app['url_generator']->generate('user_index'), 301
+                $app['url_generator']->generate('user_index'),
+                301
             );
         }
 

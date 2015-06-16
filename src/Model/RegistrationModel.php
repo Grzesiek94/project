@@ -2,8 +2,9 @@
 /**
  * Registration model.
  *
- * @link http://epi.uj.edu.pl
- * @author epi(at)uj(dot)edu(dot)pl
+ * @category Model
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
  * @copyright EPI 2015
  */
 
@@ -11,6 +12,14 @@ namespace Model;
 
 use Silex\Application;
 
+/**
+ * Class RegistrationModel.
+ *
+ * @package Model
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Silex\Application
+ */
 class RegistrationModel
 {
     /**
@@ -35,6 +44,7 @@ class RegistrationModel
      /* Add user.
      *
      * @access public
+     * @param Silex\Application $app Silex application
      * @param array $data Registration data
      * @retun mixed Result
      */
@@ -43,7 +53,7 @@ class RegistrationModel
         if ($data['password'] === $data['confirm']) {
             unset($data['confirm']);
             $data['password'] = $app['security.encoder.digest']
-                ->encodePassword($data['password'],'');
+                ->encodePassword($data['password'], '');
             $data['role_id'] = 2;
             return $this->db->insert('users', $data);
         } else {
@@ -51,9 +61,23 @@ class RegistrationModel
         }
     }
 
+    /**
+     * Gets user's ID.
+     *
+     * @access public
+     * @return mixed Result
+     */
     public function getUserId()
     {
-        $query = 'SELECT id as users_id FROM users ORDER BY users_id DESC LIMIT 1';
+        $query = '
+            SELECT
+                id AS users_id
+            FROM
+                users
+            ORDER BY
+                users_id DESC
+            LIMIT 1
+        ';
         return current($this->db->fetchAll($query));
     }
 
@@ -67,10 +91,12 @@ class RegistrationModel
     {
         return $this->db->insert('users_data', $data);
     }
+
     /**
-     * Gets information about best users.
+     * Checks if user's login is unique.
      *
      * @access public
+     * @param array $data Registration data
      * @return array Result
      */
     public function isUnique($data)

@@ -2,10 +2,12 @@
 /**
  * Login model.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Model
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
+
 
 namespace Model;
 
@@ -15,11 +17,15 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 /**
- * Class Login.
+ * Class AvatarModel.
  *
- * @category Epi
  * @package Model
- * @use Silex\Application
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @use Doctrine\DBAL\DBALException
+ * @uses Silex\Application
+ * @uses Symfony\Component\Security\Core\Exception\UnsupportedUserException
+ * @uses Symfony\Component\Security\Core\Exception\UsernameNotFoundException
  */
 class LoginModel
 {

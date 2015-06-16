@@ -42,7 +42,7 @@ class AuthController implements ControllerProviderInterface
      *
      * @access public
      * @param Silex\Application $app Silex application
-     * @return AlbumsController Result
+     * @return AuthController Result
      */
     public function connect(Application $app)
     {

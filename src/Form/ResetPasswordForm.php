@@ -1,12 +1,12 @@
 <?php
 /**
- * Log in form.
+ * Reset Password form.
  *
- * @author EPI <epi@uj.edu.pl>
- * @link http://epi.uj.edu.pl
- * @copyright 2015 EPI
+ * @category Form
+ * @author Grzegorz Stefański
+ * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @copyright EPI 2015
  */
-
 namespace Form;
 
 use Symfony\Component\Form\AbstractType;
@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class LoginForm.
+ * Class ResetPasswordForm.
  *
  * @category Epi
  * @package Form
@@ -51,7 +51,7 @@ class ResetPasswordForm extends AbstractType
                         'class' => 'form-control',
                         'placeholder' => 'Old Password'
                 ),
-            'label' => 'Old Password'
+                'label' => 'Old Password'
             )
         )
         ->add(
@@ -66,7 +66,7 @@ class ResetPasswordForm extends AbstractType
                         'class' => 'form-control',
                         'placeholder' => 'New Password'
                 ),
-            'label' => 'New Password'
+                'label' => 'New Password'
             )
         )
         ->add(
@@ -81,7 +81,7 @@ class ResetPasswordForm extends AbstractType
                         'class' => 'form-control',
                         'placeholder' => 'Confirm Password'
                 ),
-            'label' => 'Confirm Password'
+                'label' => 'Confirm Password'
             )
         );
     }
