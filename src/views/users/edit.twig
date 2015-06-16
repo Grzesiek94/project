@@ -11,7 +11,7 @@
     <div class="col-md-8">
         <div class="well">
             <center>
-            <form role="form" action="{{ url('user_edit', {'id':id}) }}" method="post">
+            <form role="form" action="{{ url('edit') }}" method="post">
                 {{ form_start(form)  }}
                     <div class="form-group">
                         {{ form_row(form.name) }}

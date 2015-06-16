@@ -60,6 +60,8 @@ class UsersController implements ControllerProviderInterface
         $usersController->match('/edit/{id}', array($this, 'editAction'))
             ->bind('user_edit');
         $usersController->match('/edit/{id}/', array($this, 'editAction'));
+        $usersController->match('/edit/', array($this, 'editAction'))
+            ->bind('edit');
         $usersController->match('/delete/{id}', array($this, 'deleteAction'))
             ->bind('user_delete');
         $usersController->match('/delete/{id}/', array($this, 'deleteAction'));
@@ -145,9 +147,14 @@ class UsersController implements ControllerProviderInterface
      */
     public function editAction(Application $app, Request $request)
     {
-
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        $this->view['userId'] = (int)$boardModel->getUserId($currentUser);
+        $id = (int)$request->get('id', $this->view['userId']);
         $usersModel = new UsersModel($app);
-        $id = (int) $request->get('id', 0);
         $user = $usersModel->getUserDetails($id);
         if (count($user)) {
             $form = $app['form.factory']
@@ -155,7 +162,6 @@ class UsersController implements ControllerProviderInterface
             $form->handleRequest($request);
             if ($form->isValid()) {
                 $data = $form->getData();
-                $usersModel = new UsersModel($app);
                 $usersModel->editUser($data);
                 $app['session']->getFlashBag()->add(
                 'message', array(
@@ -176,7 +182,6 @@ class UsersController implements ControllerProviderInterface
                 $app['url_generator']->generate('user_index'), 301
             );
         }
-
         return $app['twig']->render('users/edit.twig', $this->view);
     }
 
@@ -266,6 +271,8 @@ class UsersController implements ControllerProviderInterface
      */
     public function setGrantsAction(Application $app, Request $request)
     {
+var_dump($app['security']->getToken());
+
         $usersModel = new UsersModel($app);
         $id = (int)$request->get('id', null);
         $user = $usersModel->getUserDetails($id);
