@@ -15,20 +15,21 @@ $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\FormServiceProvider());
 $app->register(new Silex\Provider\ValidatorServiceProvider());
 $app->register(
-    new Silex\Provider\TranslationServiceProvider(), array(
+    new Silex\Provider\TranslationServiceProvider(),
+    array(
         'locale' => 'pl',
         'locale_fallbacks' => array('pl'),
     )
 );
 
-$app['translator'] = $app->share($app->extend('translator', function($translator, $app) {
+$app['translator'] = $app->share($app->extend('translator', function ($translator, $app) {
     $translator->addLoader('yaml', new YamlFileLoader());
     $translator->addResource('yaml', dirname(dirname(__FILE__)) . '/config/locales/pl.yml', 'pl');
     return $translator;
 }));
 
 $app->register(
-    new Silex\Provider\DoctrineServiceProvider(), 
+    new Silex\Provider\DoctrineServiceProvider(),
     array(
         'db.options' => array(
             'driver'    => 'pdo_mysql',
