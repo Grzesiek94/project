@@ -1,1 +1,108 @@
-
+Log in: Zaloguj
+Password: Hasło
+Registration: Rejestracja
+Main: Strona Główna
+My profile: Mój profil
+My answers: Pytania do mnie
+My questions: Zadane pytania
+My board: Moja tablica
+Users list: Lista użytkowników
+Logout: Wyloguj
+Sign up: Rejestracja
+Add user: Dodwanie użytkownika
+Register: Zarejestruj
+Confirm Password: Powtórz hasło
+Search: Szukaj użytkownika
+Ignored: Ignorowane
+Questions list: Lista pytań
+Ask me a question: Zapytaj mnie o coś
+Ask: Zapytaj
+next page: następna strona
+previous page: poprzednia strona
+Log int: Zaloguj się
+to see: aby zobaczyć
+who asked a question: kto zadał pytanie
+delete question: usuń pytanie
+Questions not found: Pytań nie znaleziono
+Something went wrong: Coś poszło niezgodnie z planem
+Application Q&A: Aplikacja Q&A
+JOINED US: DOŁĄCZYŁO
+USERS: USERÓW
+ASKED: ZADANO
+QUESTIONS: PYTAŃ
+ANSWERED: UDZIELONO
+TIMES: ODPOWIEDZI
+QUESTIONER: PYTAJĄCY
+ANSWERING: ODPOWIADACZ
+Answer question: Odpowiedz na pytanie
+asked: zapytał
+deleted asked: usunięty zapytał
+Answer me!: Odpowiedz mi!
+Answer: Odpowiedz
+You sent question to: Wysłałeś pytanie do
+edit: edytuj
+EDIT: EDYTUJ
+Delete question: Usuń pytanie
+Are you sure about deleting this question?: Jesteś pewien, że chcesz usunac to pytanie?
+Yes: Tak
+NOPE!: NIE!
+You asked: Zapytałeś
+Change question: Zmień pytanie
+Change: Zmień
+Ignore question: Ignoruj pytanie
+Are You sure about ignoring this question?: Jesteś pewien, że chcesz zignorowac to pytanie?
+Ignored questions: Zignorowane pytania
+From: Od
+To: Do
+Delete ALL: Usuń WSZYSTKIE
+Theres no ignored questions: Brak zignorowanych pytań
+deleted: usunięty
+asked a question: zadał pytanie
+answer: odpowiedz
+ignore: ignoruj
+ANSWER: ODPOWIEDZ
+IGNORE: IGNORUJ
+You have new questions to answer!: Ktoś zadał Ci nowe pytanie!
+Upload avatar: Zmień avatar
+Choose file: Wybierz plik
+Save: Zachowaj
+Delete user: Usuń użytkownika
+Are You sure about deleting this user?: Jesteś pewien, że chcesz usunąć wybranego użytkownika?
+Edit user: Zmień dane
+Name: Imię
+Surname: Nazwisko
+Website: Strona WWW
+Users not found: Użytkownik nie znaleziony
+Old Password: Bieżące hasło
+New Password: Nowe hasło
+Set grants: Ustaw uprawnienia
+Set role: Ustaw rolę
+ROLE_ADMIN: ADMIN
+ROLE_USER: UŻYTKOWNIK
+Set: Wybierz
+BACK: WSTECZ
+Edit my profile: Edytuj moje dane
+Change avatar: Zmień avatar
+Reset password: Ustaw nowe hasło
+Back to users list: Lista użytkowników
+Question added.: Pytanie dodano.
+You have to fill infromation about Your profile!: Powinieneś wypełnić informację o sobie!
+Question edited.: Pytanie zmienione pomyślnie.
+You tried to make something illegal! Be care.: Próbujesz zrobić coś nielegalnego! Uważaj!
+Question ignored.: Pytanie trafiło na listę pytań ignorowanych.
+Question deleted.: Pytanie usunięto pomyślnie.
+All ignored questions have just deleted permanently.: Wszystkie zignorowane pytania usunięto NA ZAWSZE.
+Someone uses this login. Try other.: Login zajęty, spróbuj wpisać inny.
+Account created correctly. Now You can log in to your account.: Konto utworzone pomyślnie. Teraz możesz się zalogować.
+You typed different passwords! Try again.: Wpisałeś różne hasła! Spróbuj ponownie.
+Data edited.: Pomyślnie zmieniono dane.
+User deleted.: Użytkownik usunięty.
+Grants has been changed.: Prawa zmienione pomyślnie.
+You are the last Admin, first you must choose other.: Jesteś ostatnim ADMINEM, najpierw musisz przekazać swoje prawa innemu USEROWI!
+Avatar successfully uploaded.: Avatar zmieniony pomyślnie.
+Can not upload file.: Nie można wgrać tego pliku.
+Form contains invalid data.: Formularz zawiera nieprawidłowe dane!
+Password changed.: Hasło zmienione.
+Wrong old password or You typed different passwords.: Zle bieżące hasło, albo wpisałeś różne nowe hasła!
+Illegal movement.: Zabronione posunięcie.
+Bad credentials.: Nieprawidłowe dane.

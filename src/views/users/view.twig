@@ -22,27 +22,27 @@
         <h1>
             {{ user.login }}
         </h1>
-        {{ 'Surame:'|trans }}
+        {{ 'Surname'|trans }}:
         <big>
             {{ user.surname }}
         </big><br>
-        {{ 'Name:'|trans }}
+        {{ 'Name'|trans }}:
         <small>
             {{ user.name }}
         </small><br>
-        {{ 'e-mail:'|trans }}
+        {{ 'e-mail'|trans }}:
             {{ user.email }}<br>
-        {{ 'website:'|trans }}
+        {{ 'Website'|trans }}:
         <a href="{{ user.website }}">{{ user.website }}</a><br>
         {% if user.facebook|length > 0 %}
             <a href="{{ user.facebook }}">{{ 'facebook'|trans }}</a>
         {% endif %}
         <br><br><br><br><br><br>
-        <a href="{{ url('user_index') }}" class="btn btn-default">Back to users list</a>
+        <a href="{{ url('user_index') }}" class="btn btn-default">{{ 'Back to users list'|trans }}</a>
         {% if user.id == userId %}
-            <a href="{{ url('edit') }}" class="btn btn-default">Edit my profile</a>
-            <a href="{{ url('avatar') }}" class="btn btn-default">Change avatar</a>
-            <a href="{{ url('reset_password') }}" class="btn btn-default">Reset password</a>
+            <a href="{{ url('edit') }}" class="btn btn-default">{{ 'Edit my profile'|trans }}</a>
+            <a href="{{ url('avatar') }}" class="btn btn-default">{{ 'Change avatar'|trans }}</a>
+            <a href="{{ url('reset_password') }}" class="btn btn-default">{{ 'Reset password'|trans }}</a>
         {% endif %}
         <br><br>
     {% else %}

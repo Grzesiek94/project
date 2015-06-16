@@ -30,9 +30,9 @@
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <form action="{{ url('board', {'id': user_id}) }}" method="post">
             <h3>
-                Ask me a question:
+                {{ 'Ask me a question'|trans }}:
             </h3>
-            <div class="col-md-11">{{ form_widget(form) }}</div>
+            <div class="col-md-10">{{ form_widget(form) }}</div>
             <div><input class="btn btn-default" type="submit" name="submit" value="{{ 'Ask'|trans }}" /></div>
         </form>
         <br>
@@ -84,7 +84,9 @@
                             {% endif %}
                         {% else %}
                             <a href="{{ url('auth_login') }}">
-                                Zaloguj się,<br>aby zobaczyć<br>kto zadał pytanie
+                                {{ 'Log int'|trans }},<br>
+                                {{ 'to see'|trans }}<br>
+                                {{ 'who asked a question'|trans }}
                             </a>
                             
                         {% endif %}
@@ -95,7 +97,7 @@
                     </td>
                     {% if is_granted('ROLE_ADMIN') %}
                         <td>
-                            <a href="{{ url('question_delete', {'id': data.question_id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" title="delete question"></a>
+                            <a href="{{ url('question_delete', {'id': data.question_id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" title="{{ 'delete question'|trans }}"></a>
                         </td>
                     {% endif %}
                 </tr>

@@ -1,7 +1,7 @@
 {# Index action template for Questions controller #}
 {% extends 'base.twig' %}
 
-{% block title %}{{ 'Questions list'|trans }}{% endblock %}
+{% block title %}{{ 'My questions'|trans }}{% endblock %}
 
 {% block head %}
      {{ parent() }} 
@@ -35,12 +35,12 @@
                         {{ data.login }}
                     </center></td>
                     <td>
-                        You sent question to {{ data.login }}:<br>
+                        {{ 'You sent question to'|trans }} {{ data.login }}:<br>
                         <b><big>{{ data.question }}</big></b>
                     </td>
                     <td>
-                        <a href="{{ url('my_questions_edit', {'id': data.id}) }}" class="btn btn-default" title="edit">
-                            EDIT
+                        <a href="{{ url('my_questions_edit', {'id': data.id}) }}" class="btn btn-default" title="{{ 'edit'|trans }}">
+                            {{ 'EDIT'|trans }}
                         </a>
                     </td>
                 </tr>

@@ -42,17 +42,17 @@
                         {% if data.del == 0 %}
                             {{ data.login }}
                         {% else %}
-                            deleted
+                            {{ 'deleted'|trans }}
                         {% endif %}
-                        asked a question:<br>
+                        {{ 'asked a question'|trans }}:<br>
                         <b><big>{{ data.question }}</big></b>
                     </td>
                     <td>
-                        <a href="{{ url('questions_edit', {'id': data.id}) }}" class="btn btn-default" title="answer">
-                            ANSWER
+                        <a href="{{ url('questions_edit', {'id': data.id}) }}" class="btn btn-default" title="{{ 'answer'|trans }}">
+                            {{ 'ANSWER'|trans }}
                         </a>
-                        <a href="{{ url('ignore', {'id': data.id}) }}" class="btn btn-danger" title="ignore">
-                            IGNORE
+                        <a href="{{ url('ignore', {'id': data.id}) }}" class="btn btn-danger" title="{{ 'ignore'|trans }}">
+                            {{ 'IGNORE'|trans }}
                         </a>
                     </td>
                 </tr>

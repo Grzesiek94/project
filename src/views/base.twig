@@ -25,18 +25,18 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="{{ url('main') }}">Main</a>
+                    <a class="navbar-brand" href="{{ url('main') }}">{{ 'Main'|trans }}</a>
                 </div>
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            <li><a href="{{ url('user_profile') }}">My profile</a></li>
-                            <li><a href="{{ url('questions_index') }}">My aswers</a></li>
-                            <li><a href="{{ url('my_questions') }}">My questions</a></li>
-                            <li><a href="{{ url('board_null')  }}">My board</a></li>
-                            <li><a href="{{ url('user_index') }}">Users list</a></li>
+                            <li><a href="{{ url('user_profile') }}">{{ 'My profile'|trans }}</a></li>
+                            <li><a href="{{ url('questions_index') }}">{{ 'My answers'|trans }}</a></li>
+                            <li><a href="{{ url('my_questions') }}">{{ 'My questions'|trans }}</a></li>
+                            <li><a href="{{ url('board_null')  }}">{{ 'My board'|trans }}</a></li>
+                            <li><a href="{{ url('user_index') }}">{{ 'Users list'|trans }}</a></li>
                             {% if is_granted('ROLE_ADMIN') %}
-                                <li><a href="{{ url('ignored') }}">Ignored</a></li>
+                                <li><a href="{{ url('ignored') }}">{{ 'Ignored'|trans }}</a></li>
                             {% endif %}
                         {% endif %}
                     </ul>
@@ -44,12 +44,12 @@
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                             <li><a href="{{ url('auth_logout') }}" title="{{ 'Logout'|trans }}">{{ 'Logout'|trans }}</a></li>
                         {% else %}
-                            <li><a href="{{ url('auth_login') }}" title="{{ 'Login'|trans }}">{{ 'Login'|trans }}</a></li>
-                            <li><a href="{{ url ('registration') }}" title="{{ 'Sign up'|trans }}">{{ 'Sign Up'|trans }}</a></li>
+                            <li><a href="{{ url('auth_login') }}" title="{{ 'Log in'|trans }}">{{ 'Log in'|trans }}</a></li>
+                            <li><a href="{{ url ('registration') }}" title="{{ 'Sign up'|trans }}">{{ 'Sign up'|trans }}</a></li>
                         {% endif %}
                         <form class="navbar-form navbar-right" role="search" method="get" action="{{ url('user_search') }}">
                             <div class="form-group">
-                                <input type="text" name="login" class="form-control" placeholder="Search">
+                                <input type="text" name="login" class="form-control" placeholder="{{ 'Search'|trans }}">
                             </div>
                             <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></button>
                         </form>

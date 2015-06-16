@@ -1,7 +1,7 @@
 {# Edit action template for Questions controller #}
 {% extends 'base.twig' %}
 
-{% block title %}{{  'Edit qestion'|trans }}{% endblock %}
+{% block title %}{{  'Answer question'|trans }}{% endblock %}
 
 {% block head %}
      {{ parent() }} 
@@ -15,10 +15,10 @@
     <br>
     {% if question.del == 0 %}
         <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ question.avatar|e }}" />
-        <p>{{ question.login }} asked:</p><br><br>
+        <p>{{ question.login }} {{ 'asked'|trans }}:</p><br><br>
     {% else %}
         <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/del.jpg" />
-        <p>deleted asked:</p><br><br>
+        <p>{{ 'deleted asked'|trans }}:</p><br><br>
     {% endif %}
     <center>
     {{ question.question }}<br><br>

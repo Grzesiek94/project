@@ -19,38 +19,38 @@
             {{ flashMessage.content }}
         </div>
     {% endfor %}
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque dui, hendrerit eu vulputate eu, maximus vel felis. Integer tincidunt enim quis lorem tempus mattis. Proin eget ex faucibus, cursus ligula eu, dapibus quam. Aliquam non mi id leo convallis molestie. Nunc nulla enim, gravida tincidunt suscipit id, iaculis id justo. Etiam sodales tincidunt sollicitudin. Donec vehicula tellus in dapibus venenatis. Morbi eget lobortis magna, a scelerisque lacus. Nulla blandit volutpat risus in imperdiet. Maecenas quis hendrerit massa.</p>
+    <br>
     <div class="row">
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
                 <center>
-                <h3>JOINED US</h3>
+                <h3>{{ 'JOINED US'|trans }}</h3>
                 <h1><span class="glyphicon glyphicon-user"></span>
                 {{ countUsers }}</h1>
                 <div class="caption">
-                    <h3>USERS</h3>
+                    <h3>{{ 'USERS'|trans }}</h3>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
                 <center>
-                <h3>ASKED</h3>
+                <h3>{{ 'ASKED'|trans }}</h3>
                 <h1><span class="glyphicon glyphicon-pencil"></span>
                 {{ countQuestions }}</h1>
                 <div class="caption">
-                    <h3>QUESTIONS</h3>
+                    <h3>{{ 'QUESTIONS'|trans }}</h3>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
                 <center>
-                <h3>ANSWERED</h3>
+                <h3>{{ 'ANSWERED'|trans }}</h3>
                 <h1><span class="glyphicon glyphicon-text-color"></span>
                 {{ countAnswers }}</h1>
                 <div class="caption">
-                    <h3>TIMES</h3>
+                    <h3>{{ 'TIMES'|trans }}</h3>
                 </div>
             </div>
         </div>
@@ -58,7 +58,7 @@
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
                 <center>
-                <h3>{{ loop.index }} QUESTIONER</h3>
+                <h3>{{ loop.index }}<br>{{ 'QUESTIONER'|trans }}</h3>
                 <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" />
                 <h4>{{ data.login }} ({{ data.best }})</h4>
             </div>
@@ -68,7 +68,7 @@
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
                 <center>
-                <h3>{{ loop.index }} <br> ANSWERING</h3>
+                <h3>{{ loop.index }} <br> {{ 'ANSWERING'|trans }}</h3>
                 <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" />
                 <h4>{{ data.login }} ({{ data.best }})</h4>
             </div>

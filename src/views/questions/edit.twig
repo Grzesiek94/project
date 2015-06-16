@@ -1,7 +1,7 @@
 {# Edit action template for Questions controller #}
 {% extends 'base.twig' %}
 
-{% block title %}{{  'Edit qestion'|trans }}{% endblock %}
+{% block title %}{{  'Edit question'|trans }}{% endblock %}
 
 {% block head %}
      {{ parent() }} 
@@ -14,7 +14,7 @@
 {% block content %}
     <br>
     <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ question.avatar|e }}" />
-    <p>You asked {{ question.login }}:</p><br><br>
+    <p>{{ 'You asked'|trans }} {{ question.login }}:</p><br><br>
     <center>
     <div class="col-md-2"></div>
     <div class="col-md-8">
