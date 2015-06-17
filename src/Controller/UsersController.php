@@ -271,7 +271,7 @@ class UsersController implements ControllerProviderInterface
      */
     public function searchAction(Application $app, Request $request)
     {
-        $login = $_GET['login'];
+        isset($_GET['login'])?$login = $_GET['login']:$login = null;
         $usersModel = new UsersModel($app);
         $this->view['user'] = $usersModel->getSingleUser($login);
         $token = $app['security']->getToken();

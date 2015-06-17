@@ -47,7 +47,6 @@ class AvatarForm extends AbstractType
                 'constraints' => array(new Assert\Image()),
                 'attr' => array(
                         'class' => 'form-control',
-                        'placeholder' => 'Password'
                 ),
             )
         );

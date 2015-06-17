@@ -22,8 +22,7 @@
     <br>
     <div class="row">
         <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <center>
+            <div class="thumbnail text-center">
                 <h3>{{ 'JOINED US'|trans }}</h3>
                 <h1><span class="glyphicon glyphicon-user"></span>
                 {{ countUsers }}</h1>
@@ -33,8 +32,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <center>
+            <div class="thumbnail text-center">
                 <h3>{{ 'ASKED'|trans }}</h3>
                 <h1><span class="glyphicon glyphicon-pencil"></span>
                 {{ countQuestions }}</h1>
@@ -44,8 +42,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <center>
+            <div class="thumbnail text-center">
                 <h3>{{ 'ANSWERED'|trans }}</h3>
                 <h1><span class="glyphicon glyphicon-text-color"></span>
                 {{ countAnswers }}</h1>
@@ -56,20 +53,18 @@
         </div>
         {% for data in bestQuestioning %}
         <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <center>
+            <div class="thumbnail text-center">
                 <h3>{{ loop.index }}<br>{{ 'QUESTIONER'|trans }}</h3>
-                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" />
+                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" alt="{{ data.login }}" />
                 <h4>{{ data.login }} ({{ data.best }})</h4>
             </div>
         </div>
         {% endfor %}
         {% for data in bestAnswering %}
         <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-                <center>
+            <div class="thumbnail text-center">
                 <h3>{{ loop.index }} <br> {{ 'ANSWERING'|trans }}</h3>
-                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" />
+                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" alt="{{ data.login }}" />
                 <h4>{{ data.login }} ({{ data.best }})</h4>
             </div>
         </div>

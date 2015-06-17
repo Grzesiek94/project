@@ -70,8 +70,11 @@ class QuestionsController implements ControllerProviderInterface
                          ->bind('question_delete');
         $questionsController->match('/ignored', array($this, 'ignoredAction'))
                          ->bind('ignored');
-        $questionsController->get('/ignored/del', array($this, 'deleteIgnoredAction'));
-        $questionsController->match('/ignored/del', array($this, 'deleteIgnoredAction'))
+        $questionsController->get('/ignored/del/yes', array($this, 'deleteIgnoredAction'));
+        $questionsController->match('/ignored/del/yes', array($this, 'deleteIgnoredAction'))
+                         ->bind('ignored_delete_yes');
+        $questionsController->get('/ignored/del', array($this, 'deleteIgnoredViewAction'));
+        $questionsController->match('/ignored/del', array($this, 'deleteIgnoredViewAction'))
                          ->bind('ignored_delete');
         return $questionsController;
     }
@@ -396,9 +399,21 @@ class QuestionsController implements ControllerProviderInterface
                     ->trans('All ignored questions have just deleted permanently.')
             )
         );
-            return $app->redirect(
-                $app['url_generator']->generate('ignored'),
-                301
-            );
+        return $app->redirect(
+            $app['url_generator']->generate('ignored'),
+            301
+        );
+    }
+    /**
+     * Delete Ignored View Action.
+     *
+     * @access public
+     * @param Silex\Application $app Silex application
+     * @param Symfony\Component\HttpFoundation\Request $request Request object
+     * @return string Output
+     */
+    public function deleteIgnoredViewAction(Application $app, Request $request)
+    {
+        return $app['twig']->render('questions/deleteIgnored.twig', $this->view);
     }
 }

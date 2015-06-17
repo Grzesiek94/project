@@ -6,6 +6,7 @@
      {{ parent() }} 
     <style type="text/css">
 	img { margin: 0 10px; float: left; width: 250px; height: 250px; }
+        .big { font-size: 18px; }
     </style>
 {% endblock %}
 
@@ -18,18 +19,18 @@
     {% endfor %}
     {%  if user|length > 0 %}
         <br>
-        <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" />
+        <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" alt="{ user.login|e }" />
         <h1>
             {{ user.login }}
         </h1>
         {{ 'Surname'|trans }}:
-        <big>
-            {{ user.surname }}
-        </big><br>
+        <b class="big">
+            {{ user.surname }}<br>
+        </b>
         {{ 'Name'|trans }}:
         <small>
-            {{ user.name }}
-        </small><br>
+            {{ user.name }}<br>
+        </small>
         {{ 'e-mail'|trans }}:
             {{ user.email }}<br>
         {{ 'Website'|trans }}:

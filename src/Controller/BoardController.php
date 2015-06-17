@@ -75,7 +75,8 @@ class BoardController implements ControllerProviderInterface
             $currentUser = $token->getUsername();
         }
         $boardModel = new BoardModel($app);
-        $id = (int)$request->get('id', $boardModel->getUserId($currentUser));
+        $this->view['currentUser'] = $boardModel->getUserId($currentUser);
+        $id = (int)$request->get('id', $this->view['currentUser']);
         $page = (int) $request->get('page', 1);
         $this->view['user_id'] = $id;
         $this->view = array_merge(

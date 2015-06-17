@@ -30,7 +30,7 @@
         <table class="table table-hover">
             <tbody>
                 <tr onClick="location.href='{{ url('board', {'id': user.id}) }}'">
-                    <td><img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" /></td>
+                    <td><img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" alt="{ user.login|e }" /></td>
                     <td>
                         <p id="big">{{ user.login|upper }}</p>
                         {{ user.name }} {{ user.surname }}
@@ -50,7 +50,7 @@
                             {% endif %}
 
                             {% if user.role_id == 2 %}
-                                <a href="{{ url('set_admin', {'id': user.id}) }}"><img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Apps-system-software-update-icon.png" class="icon" alt="set admin"></a>
+                                <a href="{{ url('set_grants', {'id': user.id}) }}"><img src="http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/256/Apps-system-software-update-icon.png" class="icon" alt="set grants"></a>
                             {% endif %}
                         {% endif %}
                     </td>

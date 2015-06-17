@@ -7,7 +7,7 @@
      {{ parent() }}
     <style type="text/css">
         img { width: 150px; height: 150px; }
-        #big { font-size: 40px; font-weight: bold;}
+        .big { font-size: 40px; font-weight: bold;}
         .icon { width: 32px; height: 32px; }
     </style>
 {% endblock %}
@@ -56,9 +56,9 @@
             <tbody>
             {% for user in users %}
                 <tr onClick="location.href='{{ url('board', {'id': user.id}) }}'">
-                        <td><img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" /></td>
+                        <td><img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" alt="{ user.login }" /></td>
                         <td>
-                            <p id="big">{{ user.login|upper }}</p>
+                            <p class="big">{{ user.login|upper }}</p>
                             {{ user.name }} {{ user.surname }}
                             {% if user.role_id == 1 %}
                                 <small style="color: lime;">[admin]</small><br><br>

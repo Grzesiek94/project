@@ -143,6 +143,8 @@ class UsersModel
                 users.id = users_id
            AND
                 del = 0
+           ORDER BY 
+                login
            LIMIT :start, :limit
         ';
         $statement = $this->db->prepare($query);

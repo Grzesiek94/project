@@ -11,6 +11,7 @@
         a { text-decoration: none; }
         a:hover { text-decoration: none; }
         .icon { width: 20px; height: 20px; }
+        .big { font-size: 18px; }
     </style>
 {% endblock %}
 {% block content %}
@@ -22,12 +23,12 @@
         </div>
     {% endfor %}
     {% if user|length > 0 %}
-    <h2>
-        <center>{{ user.login|upper }}</center>
+    <h2 class="text-center">
+        {{ user.login|e }}
     </h2>
-    <img class="img-thumbnail avatar" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" />
+    <img class="img-thumbnail avatar" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" alt="{ user.admin|e }" />
 
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') and user_id != currentUser %}
         <form action="{{ url('board', {'id': user_id}) }}" method="post">
             <h3>
                 {{ 'Ask me a question'|trans }}:
@@ -72,7 +73,7 @@
             <tbody>
             {% for data in board %} 
                 <tr>
-                    <td><center>
+                    <td class="text-center">
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                             {% if data.del == 0 %}
                                 <a href="{{ url('board', {'id': data.users_question_id, 'page': 1}) }}" title="{{ data.login }}">
@@ -90,9 +91,9 @@
                             </a>
                             
                         {% endif %}
-                    </center></td>
+                    </td>
                     <td>
-                        <b><big>{{ data.question }}</big></b>
+                        <b class="big">{{ data.question }}</b>
                         <br><br>{{ data.answer }}
                     </td>
                     {% if is_granted('ROLE_ADMIN') %}
@@ -109,7 +110,6 @@
             {{ 'Questions not found'|trans }}.
         </div>
     {% endif %}
-    </div>
     {% else %}
         <br>
         <div class="alert alert-danger" role="alert">
