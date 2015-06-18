@@ -96,11 +96,14 @@
                         <b class="big">{{ data.question }}</b>
                         <br><br>{{ data.answer }}
                     </td>
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <td>
-                            <a href="{{ url('question_delete', {'id': data.question_id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" title="{{ 'delete question'|trans }}"></a>
+                    <td>
+                        {% if user_id == currentUser %}
+                                <a href="{{ url('my_answers_edit', {'id': data.question_id}) }}"><img src="http://static.tumblr.com/4c0d946457ea30931e1b10dc8e378e87/jjjsjij/RXWmz1z5x/tumblr_static_edit_logo.png" class="icon" alt="edit" title="{{ 'edit answer'|trans }}"></a>
+                        {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ url('question_delete', {'id': data.question_id}) }}"><img src="https://cdn3.iconfinder.com/data/icons/musthave/256/Remove.png" class="icon" title="{{ 'delete question'|trans }}"></a>
+                            {% endif %}
                         </td>
-                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>

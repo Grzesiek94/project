@@ -62,6 +62,9 @@ class QuestionsController implements ControllerProviderInterface
         $questionsController->match('/my/edit/{id}', array($this, 'editQuestionAction'));
         $questionsController->match('/my/edit/{id}', array($this, 'editQuestionAction'))
                          ->bind('my_questions_edit');
+        $questionsController->match('/answer/edit/{id}', array($this, 'editAnswerAction'));
+        $questionsController->match('/answer/edit/{id}', array($this, 'editAnswerAction'))
+                         ->bind('my_answers_edit');
         $questionsController->get('/ignore/{id}', array($this, 'ignoreAction'));
         $questionsController->match('/ignore/{id}', array($this, 'ignoreAction'))
                          ->bind('ignore');
@@ -246,6 +249,68 @@ class QuestionsController implements ControllerProviderInterface
     }
 
     /**
+     * Edit answer action.
+     *
+     * @access public
+     * @param Silex\Application $app Silex application
+     * @param Symfony\Component\HttpFoundation\Request $request Request object
+     * @return string Output
+     */
+    public function editAnswerAction(Application $app, Request $request)
+    {
+        $id = (int) $request->get('id', null);
+        $token = $app['security']->getToken();
+        if (null !== $token) {
+            $currentUser = $token->getUsername();
+        }
+        $boardModel = new BoardModel($app);
+        $userId = (int)$boardModel->getUserId($currentUser);
+        $questionsModel = new QuestionsModel($app);
+        $answer = $questionsModel->getAnswerToEdit($id, $userId);
+        $this->view['answer'] = $answer;
+        if (count($answer)) {
+            $form = $app['form.factory']
+                ->createBuilder(new QuestionForm(), $answer)->getForm();
+            $form->remove('question');
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $questionsModel->edit($data);
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('Answer edited.')
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('board_null'),
+                    301
+                );
+            }
+
+            $this->view['id'] = $id;
+            $this->view['form'] = $form->createView();
+
+        } else {
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'danger', 'content' =>
+                    $app['translator']
+                        ->trans('You tried to make something illegal! Be care.')
+                )
+            );
+            return $app->redirect(
+                $app['url_generator']->generate('board_null'),
+                301
+            );
+        }
+        return $app['twig']->render('questions/editAnswer.twig', $this->view);
+    }
+
+    /**
      * Ignore action.
      *
      * @access public
@@ -380,7 +445,7 @@ class QuestionsController implements ControllerProviderInterface
         return $app['twig']->render('questions/ignored.twig', $this->view);
     }
     /**
-     * Ignored action.
+     * Delete ignored questions action.
      *
      * @access public
      * @param Silex\Application $app Silex application

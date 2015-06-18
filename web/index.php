@@ -73,7 +73,6 @@ $app->register(
             ),
         ),
         'security.access_rules' => array(
-            array('^/.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
             array('^/auth.+$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
             array('^/registration/$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
             array('^/user/search.*$', 'IS_AUTHENTICATED_ANONYMOUSLY'),
