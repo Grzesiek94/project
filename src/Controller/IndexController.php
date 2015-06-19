@@ -78,7 +78,7 @@ class IndexController implements ControllerProviderInterface
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
-                    'type' => 'success', 'content' =>
+                    'type' => 'warning', 'content' =>
                     $app['translator']
                     ->trans('You have new questions to answer!')
                 )
@@ -89,7 +89,7 @@ class IndexController implements ControllerProviderInterface
             $app['session']->getFlashBag()->add(
                 'message',
                 array(
-                    'type' => 'success', 'content' =>
+                    'type' => 'warning', 'content' =>
                     $app['translator']
                     ->trans('You have to fill infromation about Your profile!')
                 )

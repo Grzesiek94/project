@@ -8,10 +8,12 @@
 {% endblock %}
 
 {% block content %}
-    <h1>
-        {{ 'Delete ignored question'|trans }}
-    </h1>
-	<p>{{ 'Are you sure about deleting all ignored question?'|trans }}</p>
-	<a href="{{ url('ignored_delete_yes') }}" class="btn btn-success" >{{ 'Yes'|trans }}</a>
-	<a href="{{ url('ignored') }}" class="btn btn-danger" >{{ 'NOPE!'|trans }}</a><br><br>
+    <div class="text-center">
+        <h1>
+            {{ 'Delete ignored question'|trans }}
+        </h1>
+	    <p>{{ 'Are you sure about deleting all ignored question?'|trans }}</p>
+	    <a href="{{ url('ignored_delete_yes') }}" class="btn btn-success" >{{ 'Yes'|trans }}</a>
+	    <a href="{{ url('ignored') }}" class="btn btn-danger" >{{ 'NOPE!'|trans }}</a><br><br>
+    </div>
 {% endblock %}

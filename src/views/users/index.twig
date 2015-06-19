@@ -9,6 +9,7 @@
         img { width: 150px; height: 150px; }
         .big { font-size: 40px; font-weight: bold;}
         .icon { width: 32px; height: 32px; }
+        .pointer { cursor: pointer; }
     </style>
 {% endblock %}
 
@@ -55,7 +56,7 @@
         <table class="table table-hover">
             <tbody>
             {% for user in users %}
-                <tr onClick="location.href='{{ url('board', {'id': user.id}) }}'">
+                <tr class="pointer" onClick="location.href='{{ url('board', {'id': user.id}) }}'">
                         <td><img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" alt="{ user.login }" /></td>
                         <td>
                             <p class="big">{{ user.login|upper }}</p>

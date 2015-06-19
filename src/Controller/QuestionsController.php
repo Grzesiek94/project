@@ -343,7 +343,7 @@ class QuestionsController implements ControllerProviderInterface
                     'message',
                     array(
                         'type' => 'success', 'content' =>
-                        $app['translator']->trans('Question ignored.')
+                        $app['translator']->trans('Question deleted.')
                     )
                 );
                 return $app->redirect(

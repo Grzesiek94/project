@@ -50,7 +50,6 @@ You asked: Zapytałeś
 Change question: Zmień pytanie
 Change: Zmień
 Ignore question: Ignoruj pytanie
-Are You sure about ignoring this question?: Jesteś pewien, że chcesz zignorowac to pytanie?
 Ignored questions: Zignorowane pytania
 From: Od
 To: Do
@@ -61,7 +60,8 @@ asked a question: zadał pytanie
 answer: odpowiedz
 ignore: ignoruj
 ANSWER: ODPOWIEDZ
-IGNORE: IGNORUJ
+DELETE: USUŃ
+delete: usuń
 You have new questions to answer!: Ktoś zadał Ci nowe pytanie!
 Upload avatar: Zmień avatar
 Choose file: Wybierz plik
@@ -89,7 +89,6 @@ Question added.: Pytanie dodano.
 You have to fill infromation about Your profile!: Powinieneś wypełnić informację o sobie!
 Question edited.: Pytanie zmienione pomyślnie.
 You tried to make something illegal! Be care.: Próbujesz zrobić coś nielegalnego! Uważaj!
-Question ignored.: Pytanie trafiło na listę pytań ignorowanych.
 Question deleted.: Pytanie usunięto pomyślnie.
 All ignored questions have just deleted permanently.: Wszystkie zignorowane pytania usunięto NA ZAWSZE.
 Someone uses this login. Try other.: Login zajęty, spróbuj wpisać inny.

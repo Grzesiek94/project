@@ -1,20 +1,23 @@
 {# Delete action template for Users controller #}
 {% extends 'base.twig' %}
 
-{% block title %}{{  'Ignore question'|trans }}{% endblock %}
+{% block title %}{{  'Delete question'|trans }}{% endblock %}
 
 {% block head %}
      {{ parent() }}
 {% endblock %}
 
 {% block content %}
-    <h1>
-        {{ 'Ignore question'|trans }}
-    </h1>
-    <form action="{{ url('ignore', {'id':id}) }}" method="post">
-        {{ form_widget(form) }}
-	<p>{{ 'Are You sure about ignoring this question?'|trans }}</p>
-        <input type="submit" class="btn btn-success" name="submit" value="{{ 'Yes'|trans }}" />
-	<a href="{{ url('questions_index') }}" class="btn btn-danger" >{{ 'NOPE!'|trans }}</a>
-    </form>
+    <div class="text-center">
+        <h1>
+            {{ 'Delete question'|trans }}
+        </h1>
+        <form action="{{ url('ignore', {'id':id}) }}" method="post">
+            {{ form_widget(form) }}
+	    <p>{{ 'Are you sure about deleting this question?'|trans }}</p>
+            <input type="submit" class="btn btn-success" name="submit" value="{{ 'Yes'|trans }}" />
+	    <a href="{{ url('questions_index') }}" class="btn btn-danger" >{{ 'NOPE!'|trans }}</a>
+            <br><br>
+        </form>
+    </div>
 {% endblock %}

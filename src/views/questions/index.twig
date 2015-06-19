@@ -51,8 +51,8 @@
                         <a href="{{ url('questions_edit', {'id': data.id}) }}" class="btn btn-default" title="{{ 'answer'|trans }}">
                             {{ 'ANSWER'|trans }}
                         </a>
-                        <a href="{{ url('ignore', {'id': data.id}) }}" class="btn btn-danger" title="{{ 'ignore'|trans }}">
-                            {{ 'IGNORE'|trans }}
+                        <a href="{{ url('ignore', {'id': data.id}) }}" class="btn btn-danger" title="{{ 'delete'|trans }}">
+                            {{ 'DELETE'|trans }}
                         </a>
                     </td>
                 </tr>
@@ -60,7 +60,7 @@
             </tbody>
         </table>
     {% else %}
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-info" role="alert">
             {{ 'Questions not found'|trans }}.
         </div>
     {% endif %}

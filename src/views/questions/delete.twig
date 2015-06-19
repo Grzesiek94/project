@@ -8,13 +8,16 @@
 {% endblock %}
 
 {% block content %}
-    <h1>
-        {{ 'Delete question'|trans }}
-    </h1>
-    <form action="{{ url('question_delete', {'id':id}) }}" method="post">
-        {{ form_widget(form) }}
-	<p>{{ 'Are you sure about deleting this question?'|trans }}</p>
-        <input type="submit" class="btn btn-success" name="submit" value="{{ 'Yes'|trans }}" />
-	<a href="{{ url('board', {'id': inform.users_answer_id}) }}" class="btn btn-danger" >{{ 'NOPE!'|trans }}</a>
-    </form>
+    <div class="text-center">
+        <h1>
+            {{ 'Delete question'|trans }}
+        </h1>
+        <form action="{{ url('question_delete', {'id':id}) }}" method="post">
+            {{ form_widget(form) }}
+	    <p>{{ 'Are you sure about deleting this question?'|trans }}</p>
+            <input type="submit" class="btn btn-success" name="submit" value="{{ 'Yes'|trans }}" />
+	    <a href="{{ url('board', {'id': inform.users_answer_id}) }}" class="btn btn-danger" >{{ 'NOPE!'|trans }}</a>
+        </form>
+    </div>
+    <br>
 {% endblock %}
