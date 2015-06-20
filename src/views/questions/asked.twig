@@ -1,24 +1,23 @@
-{# Index action template for Questions controller #}
+{# Asked action template for Questions controller #}
+
 {% extends 'base.twig' %}
 
 {% block title %}{{ 'My questions'|trans }}{% endblock %}
 
 {% block head %}
-     {{ parent() }} 
+    {{ parent() }} 
     <style type="text/css">
         img { width: 50px; height: 50px; }
-
     </style>
 {% endblock %}
 
 {% block content %}
-
-{% for flashMessage in app.session.getFlashBag.get('message') %}
-    <br>
-    <div class="alert alert-{{ flashMessage.type }}" role="alert">
-        {{ flashMessage.content }}
-    </div>
-{% endfor %}
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <br>
+        <div class="alert alert-{{ flashMessage.type }}" role="alert">
+            {{ flashMessage.content }}
+        </div>
+    {% endfor %}
 
     <h1>
         {{ 'My questions'|trans }}
@@ -26,25 +25,25 @@
     {%  if questions|length > 0 %}
         <table class="table table-hover">
             <tbody>
-            {% for data in questions %} 
-                <tr>
-                    <td><center>
-                        <a href="{{ url('board', {'id': data.users_answer_id, 'page': 1}) }}" title="{{ data.login }}">
-                            <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" /><br>
-                        </a>
-                        {{ data.login }}
-                    </center></td>
-                    <td>
-                        {{ 'You sent question to'|trans }} {{ data.login }}:<br>
-                        <b><big>{{ data.question }}</big></b>
-                    </td>
-                    <td>
-                        <a href="{{ url('my_questions_edit', {'id': data.id}) }}" class="btn btn-default" title="{{ 'edit'|trans }}">
-                            {{ 'EDIT'|trans }}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
+                {% for data in questions %} 
+                    <tr>
+                        <td><center>
+                            <a href="{{ url('board', {'id': data.users_answer_id, 'page': 1}) }}" title="{{ data.login }}">
+                                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" /><br>
+                            </a>
+                            {{ data.login }}
+                        </center></td>
+                        <td>
+                            {{ 'You sent question to'|trans }} {{ data.login }}:<br>
+                            <b><big>{{ data.question }}</big></b>
+                        </td>
+                        <td>
+                            <a href="{{ url('my_questions_edit', {'id': data.id}) }}" class="btn btn-default" title="{{ 'edit'|trans }}">
+                                {{ 'EDIT'|trans }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     {% else %}

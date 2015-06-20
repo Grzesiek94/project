@@ -1,10 +1,11 @@
-{# Index action template for Questions controller #}
+{# Ignored action template for Questions controller #}
+
 {% extends 'base.twig' %}
 
 {% block title %}{{ 'Ignored questions'|trans }}{% endblock %}
 
 {% block head %}
-     {{ parent() }} 
+    {{ parent() }} 
     <style type="text/css">
         img { width: 50px; height: 50px; }
         a { float: right; }
@@ -12,13 +13,12 @@
 {% endblock %}
 
 {% block content %}
-
-{% for flashMessage in app.session.getFlashBag.get('message') %}
-    <br>
-    <div class="alert alert-{{ flashMessage.type }}" role="alert">
-        {{ flashMessage.content }}
-    </div>
-{% endfor %}
+    {% for flashMessage in app.session.getFlashBag.get('message') %}
+        <br>
+        <div class="alert alert-{{ flashMessage.type }}" role="alert">
+            {{ flashMessage.content }}
+        </div>
+    {% endfor %}
 
     <h1>
         {{ 'Ignored questions'|trans }}
@@ -26,35 +26,37 @@
     {%  if ignored|length > 0 %}
         <table class="table table-hover">
             <thead>
-            <tr>
-                <th class="text-center">{{ 'From'|trans }}:</th>
-                <th></th>
-                <th class="text-center">{{ 'To'|trans }}:</th>
-                <th></th>
-            </tr>
+                <tr>
+                    <th class="text-center">{{ 'From'|trans }}:</th>
+                    <th></th>
+                    <th class="text-center">{{ 'To'|trans }}:</th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
-            {% for data in ignored %} 
-                <tr>
-                    <td class="text-center">
-                        <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.question_avatar|e }}" alt="{ data.login }" /><br>
-                        {{ data.question_login }}
-                    </td>
-                    <td class="text-center">
-                        <h4><span class="glyphicon glyphicon-arrow-right"></span></h4>
-                    </td>
-                    <td class="text-center">
-                        <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.answer_avatar|e }}" alt="{ data.login }" /><br>
-                        {{ data.answer_login }}
-                    </td>
-                    <td class="text-center">
-                        {{ data.question }}
-                    </td>
-                </tr>
-            {% endfor %}
+                {% for data in ignored %} 
+                    <tr>
+                        <td class="text-center">
+                            <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.question_avatar|e }}" alt="{ data.login }" /><br>
+                            {{ data.question_login }}
+                        </td>
+                        <td class="text-center">
+                            <h4><span class="glyphicon glyphicon-arrow-right"></span></h4>
+                        </td>
+                        <td class="text-center">
+                            <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.answer_avatar|e }}" alt="{ data.login }" /><br>
+                            {{ data.answer_login }}
+                        </td>
+                        <td class="text-center">
+                            {{ data.question }}
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
-	<a href="{{ url('ignored_delete') }}" class="btn btn-danger" >{{ 'Delete ALL'|trans }}</a>
+	    <a href="{{ url('ignored_delete') }}" class="btn btn-danger">
+            {{ 'Delete ALL'|trans }}
+        </a>
         <br><br>
     {% else %}
         <div class="alert alert-info" role="alert">

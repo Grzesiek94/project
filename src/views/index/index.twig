@@ -1,10 +1,11 @@
-{# Index action template for Albums controller #}
+{# Index action template for Index controller #}
+
 {% extends 'base.twig' %}
 
 {% block title %}{{ 'Application Q&A'|trans }}{% endblock %}
 
 {% block head %}
-     {{ parent() }} 
+    {{ parent() }} 
     <style type="text/css">
         img { max-width: 70px; max-height: 70px; }
         #big { font-size: 40px; font-weight: bold;}
@@ -52,22 +53,22 @@
             </div>
         </div>
         {% for data in bestQuestioning %}
-        <div class="col-sm-6 col-md-4">
-            <div class="thumbnail text-center">
-                <h3>{{ loop.index }}<br>{{ 'QUESTIONER'|trans }}</h3>
-                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" alt="{{ data.login }}" />
-                <h4>{{ data.login }} ({{ data.best }})</h4>
+            <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail text-center">
+                    <h3>{{ loop.index }}<br>{{ 'QUESTIONER'|trans }}</h3>
+                    <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" alt="{{ data.login }}" />
+                    <h4>{{ data.login }} ({{ data.best }})</h4>
+                </div>
             </div>
-        </div>
         {% endfor %}
         {% for data in bestAnswering %}
-        <div class="col-sm-6 col-md-4">
-            <div class="thumbnail text-center">
-                <h3>{{ loop.index }} <br> {{ 'ANSWERING'|trans }}</h3>
-                <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" alt="{{ data.login }}" />
-                <h4>{{ data.login }} ({{ data.best }})</h4>
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail text-center">
+                    <h3>{{ loop.index }} <br> {{ 'ANSWERING'|trans }}</h3>
+                    <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ data.avatar|e }}" alt="{{ data.login }}" />
+                    <h4>{{ data.login }} ({{ data.best }})</h4>
+                </div>
             </div>
-        </div>
         {% endfor %}
     </div>
 {% endblock %}

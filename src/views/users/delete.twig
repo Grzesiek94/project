@@ -1,10 +1,11 @@
 {# Delete action template for Users controller #}
+
 {% extends 'base.twig' %}
 
 {% block title %}{{  'Delete user'|trans }}{% endblock %}
 
 {% block head %}
-     {{ parent() }}
+    {{ parent() }}
 {% endblock %}
 
 {% block content %}
@@ -13,8 +14,8 @@
     </h1>
     <form action="{{ url('user_delete', {'id':id}) }}" method="post">
         {{ form_widget(form) }}
-	<p>{{ 'Are You sure about deleting this user?'|trans }}</p>
+	    <p>{{ 'Are You sure about deleting this user?'|trans }}</p>
         <input type="submit" class="btn btn-success" name="submit" value="{{ 'Yes'|trans }}" />
-	<a href="{{ url('user_index') }}" class="btn btn-danger" >{{ 'NOPE!'|trans }}</a>
+	    <a href="{{ url('user_index') }}" class="btn btn-danger" >{{ 'NOPE!'|trans }}</a>
     </form>
 {% endblock %}

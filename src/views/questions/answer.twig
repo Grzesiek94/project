@@ -1,10 +1,11 @@
-{# Edit action template for Questions controller #}
+{# Answer action template for Questions controller #}
+
 {% extends 'base.twig' %}
 
 {% block title %}{{  'Answer question'|trans }}{% endblock %}
 
 {% block head %}
-     {{ parent() }} 
+    {{ parent() }} 
     <style type="text/css">
         img { margin: 0 10px; float: left; width: 80px; height: 80px; }
         p { font-size: 30px; font-weight: bold; }
@@ -21,18 +22,20 @@
         <p>{{ 'deleted asked'|trans }}:</p><br><br>
     {% endif %}
     <center>
-    {{ question.question }}<br><br>
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-        <div class="well">
-            <form role="form" action="{{ url('questions_edit', {'id':id}) }}" method="post">
-                {{ form_start(form)  }}
-                    <div class="form-group">
-                        {{ form_row(form.answer) }}
-                    </div>
-                    <input type="submit" class="btn btn-default" name="submit" value="{{ 'Answer'|trans }}" />
-                {{ form_end(form) }}
-            </form>
+        {{ question.question }}<br><br>
+        <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div class="well">
+                    <form role="form" action="{{ url('questions_edit', {'id':id}) }}" method="post">
+                        {{ form_start(form)  }}
+                            <div class="form-group">
+                                {{ form_row(form.answer) }}
+                            </div>
+                            <input type="submit" class="btn btn-default" name="submit" value="{{ 'Answer'|trans }}" />
+                        {{ form_end(form) }}
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
+    </center>
 {% endblock %}

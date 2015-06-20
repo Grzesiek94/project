@@ -1,17 +1,18 @@
-{# Add action template for Photos controller #}
+{# Avatar action template for Users controller #}
+
 {% extends 'base.twig' %}
 
 {% block title %}{{ 'Upload avatar'|trans }}{% endblock %}
 
 {% block content %}
-    <h1>
-        {{ 'Upload avatar'|trans }}
-    </h1>
     {% for flashMessage in app.session.getFlashBag.get('message') %}
         <div class="alert alert-{{ flashMessage.type }}">
             {{ flashMessage.content }}
         </div>
     {% endfor %}
+    <h1>
+        {{ 'Upload avatar'|trans }}
+    </h1>
     <form action="{{ url('avatar') }}" {{ form_enctype(form) }} method="post">
         {{ form_widget(form) }}<br>
         <input type="submit" name="submit" class="btn btn-default" value="{{ 'Save'|trans }}" />

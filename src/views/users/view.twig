@@ -1,11 +1,13 @@
+{# View action template for Users controller #}
+
 {% extends 'base.twig' %}
 
 {% block title %}Profil - {{ user.login }}{% endblock %}
 
 {% block head %}
-     {{ parent() }} 
+    {{ parent() }} 
     <style type="text/css">
-	img { margin: 0 10px; float: left; width: 250px; height: 250px; }
+	    img { margin: 0 10px; float: left; width: 250px; height: 250px; }
         .big { font-size: 18px; }
     </style>
 {% endblock %}
@@ -17,6 +19,7 @@
             {{ flashMessage.content }}
         </div>
     {% endfor %}
+
     {%  if user|length > 0 %}
         <br>
         <img class="img-thumbnail" src="{{ app.request.basepath }}/upload/{{ user.avatar|e }}" alt="{ user.login|e }" />

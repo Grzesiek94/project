@@ -52,6 +52,13 @@ class GrantsForm extends AbstractType
         $this->app = $app;
     }
 
+    /**
+     * Gets all roles to choice list.
+     *
+     * @access public
+     * @param Silex\Application $app Silex application
+     * @return array Result
+     */
     private function getAllRoles(Application $app)
     {
         $return = array();

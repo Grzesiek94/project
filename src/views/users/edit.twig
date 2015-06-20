@@ -1,4 +1,5 @@
 {# Edit action template for Users controller #}
+
 {% extends 'base.twig' %}
 
 {% block title %}{{  'Edit user'|trans }}{% endblock %}
@@ -8,29 +9,31 @@
         {{ 'Edit user'|trans }}
     </h1>
     <div class="col-md-2"></div>
-    <div class="col-md-8">
-        <div class="well">
-            <center>
-            <form role="form" action="{{ url('edit') }}" method="post">
-                {{ form_start(form)  }}
-                    <div class="form-group">
-                        {{ form_row(form.name) }}
-                    </div>
-                    <div class="form-group">
-                        {{ form_row(form.surname) }}
-                    </div>
-                    <div class="form-group">
-                        {{ form_row(form.email) }}
-                    </div>
-                    <div class="form-group">
-                        {{ form_row(form.website) }}
-                    </div>
-                    <div class="form-group">
-                        {{ form_row(form.facebook) }}
-                    </div>
-                    <input type="submit" class="btn btn-default" name="submit" value="{{ 'Save'|trans }}" />
-                {{ form_end(form) }}
-            </form>
+        <div class="col-md-8">
+            <div class="well">
+                <center>
+                    <form role="form" action="{{ url('edit') }}" method="post">
+                        {{ form_start(form)  }}
+                            <div class="form-group">
+                                {{ form_row(form.name) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_row(form.surname) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_row(form.email) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_row(form.website) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_row(form.facebook) }}
+                            </div>
+                            <input type="submit" class="btn btn-default" name="submit" value="{{ 'Save'|trans }}" />
+                        {{ form_end(form) }}
+                    </form>
+                </center>
+            </div>
         </div>
     </div>
 {% endblock %}
