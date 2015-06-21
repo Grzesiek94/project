@@ -103,9 +103,9 @@ $app->error(
             $code = (string)$e->getStatusCode();
         }
 
-        if ($app['debug']) {
-            return;
-        }
+    //    if ($app['debug']) {
+     //       return;
+      //  }
 
         // 404.html, or 40x.html, or 4xx.html, or error.html
         $templates = array(

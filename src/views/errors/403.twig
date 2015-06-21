@@ -4,10 +4,13 @@
 
 {% block head %}
     {{ parent() }}
+    <style type="text/css">
+        p { font-size: 50px; font-weight: bold; }
+    </style>
 {% endblock %}
 
 {% block content %}
     <div class="text-center">
-        <img src="http://idanenet.danebank.nsw.edu.au/access-denied.png" alt="access denied">
+        <p>{{ 'Something went wrong'|trans }}</p>
     </div>
 {% endblock %}

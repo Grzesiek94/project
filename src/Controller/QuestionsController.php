@@ -130,19 +130,23 @@ class QuestionsController implements ControllerProviderInterface
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $data = $form->getData();
-                $questionsModel->edit($data);
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']->trans('Answer added correctly.')
-                    )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('questions_index'),
-                    301
-                );
+                try {
+                    $data = $form->getData();
+                    $questionsModel->edit($data);
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success', 'content' =>
+                            $app['translator']->trans('Answer added correctly.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('questions_index'),
+                        301
+                    );
+                } catch (\Exception $e) {
+                    $app->abort(403, $app['translator']->trans('Something went wrong'));
+                }
             }
 
             $this->view['id'] = $id;
@@ -213,19 +217,23 @@ class QuestionsController implements ControllerProviderInterface
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $data = $form->getData();
-                $questionsModel->edit($data);
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']->trans('Question edited.')
-                    )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('my_questions'),
-                    301
-                );
+                try {
+                    $data = $form->getData();
+                    $questionsModel->edit($data);
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success', 'content' =>
+                            $app['translator']->trans('Question edited.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('my_questions'),
+                        301
+                    );
+                } catch (\Exception $e) {
+                    $app->abort(403, $app['translator']->trans('Something went wrong'));
+                }
             }
 
             $this->view['id'] = $id;
@@ -275,19 +283,23 @@ class QuestionsController implements ControllerProviderInterface
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $data = $form->getData();
-                $questionsModel->edit($data);
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']->trans('Answer edited.')
-                    )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('board_null'),
-                    301
-                );
+                try {
+                    $data = $form->getData();
+                    $questionsModel->edit($data);
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success', 'content' =>
+                            $app['translator']->trans('Answer edited.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('board_null'),
+                        301
+                    );
+                } catch (\Exception $e) {
+                    $app->abort(403, $app['translator']->trans('Something went wrong'));
+                }
             }
 
             $this->view['id'] = $id;
@@ -337,19 +349,23 @@ class QuestionsController implements ControllerProviderInterface
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $data = $form->getData();
-                $questionsModel->ignore($data);
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']->trans('Question deleted.')
-                    )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('questions_index'),
-                    301
-                );
+                try {
+                    $data = $form->getData();
+                    $questionsModel->ignore($data);
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success', 'content' =>
+                            $app['translator']->trans('Question deleted.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('questions_index'),
+                        301
+                    );
+                } catch (\Exception $e) {
+                    $app->abort(403, $app['translator']->trans('Something went wrong'));
+                }
             }
 
             $this->view['id'] = $id;
@@ -395,20 +411,24 @@ class QuestionsController implements ControllerProviderInterface
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $data = $form->getData();
-                $questionsModel->delete($data);
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']->trans('Question deleted.')
-                    )
-                );
-                return $app->redirect(
-                    $app['url_generator']
-                    ->generate('board', array('id' => $redirect)),
-                    301
-                );
+                try {
+                    $data = $form->getData();
+                    $questionsModel->delete($data);
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success', 'content' =>
+                            $app['translator']->trans('Question deleted.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']
+                        ->generate('board', array('id' => $redirect)),
+                        301
+                    );
+                } catch (\Exception $e) {
+                    $app->abort(403, $app['translator']->trans('Something went wrong'));
+                }
             }
 
             $this->view['id'] = $id;

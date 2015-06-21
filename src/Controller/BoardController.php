@@ -91,24 +91,28 @@ class BoardController implements ControllerProviderInterface
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $data = $form->getData();
-            $data['users_answer_id'] = $id;
-            $token = $app['security']->getToken();
-            if (null !== $token) {
-                $currentUser = $token->getUsername();
+            try {
+                $data = $form->getData();
+                $data['users_answer_id'] = $id;
+                $token = $app['security']->getToken();
+                if (null !== $token) {
+                    $currentUser = $token->getUsername();
+                }
+                $data['users_question_id'] = (int)$boardModel->getUserId($currentUser);
+                $boardModel->askQuestion($data);
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'success', 'content' =>
+                        $app['translator']->trans('Question added.')
+                    )
+                );
+                return $app->redirect(
+                    $app['request']->getUri()
+                );
+            } catch (\Exception $e) {
+                $app->abort(403, $app['translator']->trans('Something went wrong'));
             }
-            $data['users_question_id'] = (int)$boardModel->getUserId($currentUser);
-            $boardModel->askQuestion($data);
-            $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'success', 'content' =>
-                    $app['translator']->trans('Question added.')
-                )
-            );
-            return $app->redirect(
-                $app['request']->getUri()
-            );
         }
         $this->view['form'] = $form->createView();
         return $app['twig']->render('board/index.twig', $this->view);

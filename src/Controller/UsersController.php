@@ -109,17 +109,21 @@ class UsersController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
-        $pageLimit = 10;
-        $page = (int) $request->get('page', 1);
-        $usersModel = new UsersModel($app);
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $this->view['currentUser'] = $token->getUsername();
+        try {
+            $pageLimit = 10;
+            $page = (int) $request->get('page', 1);
+            $usersModel = new UsersModel($app);
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $this->view['currentUser'] = $token->getUsername();
+            }
+            $this->view = array_merge(
+                $this->view,
+                $usersModel->getPaginatedUsers($page, $pageLimit)
+            );
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
-        $this->view = array_merge(
-            $this->view,
-            $usersModel->getPaginatedUsers($page, $pageLimit)
-        );
         return $app['twig']->render('users/index.twig', $this->view);
     }
 
@@ -133,20 +137,24 @@ class UsersController implements ControllerProviderInterface
      */
     public function viewAction(Application $app, Request $request)
     {
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        $this->view['userId'] = $boardModel->getUserId($currentUser);
-        $id = (int)$request->get('id', $this->view['userId']);
-        $usersModel = new UsersModel($app);
-        $this->view['user'] = $usersModel->getUser($id);
-        if (!count($this->view['user'])) {
-            return $app->redirect(
-                $app['url_generator']->generate('user_index'),
-                301
-            );
+        try {
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
+            }
+            $boardModel = new BoardModel($app);
+            $this->view['userId'] = $boardModel->getUserId($currentUser);
+            $id = (int)$request->get('id', $this->view['userId']);
+            $usersModel = new UsersModel($app);
+            $this->view['user'] = $usersModel->getUser($id);
+            if (!count($this->view['user'])) {
+                return $app->redirect(
+                    $app['url_generator']->generate('user_index'),
+                    301
+                );
+            }
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('users/view.twig', $this->view);
     }
@@ -161,43 +169,51 @@ class UsersController implements ControllerProviderInterface
      */
     public function editAction(Application $app, Request $request)
     {
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        $this->view['userId'] = (int)$boardModel->getUserId($currentUser);
-        $id = (int)$request->get('id', $this->view['userId']);
-        $usersModel = new UsersModel($app);
-        $user = $usersModel->getUserDetails($id);
-        if (count($user)) {
-            $form = $app['form.factory']
-                ->createBuilder(new UserForm(), $user)->getForm();
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $data = $form->getData();
-                $usersModel->editUser($data);
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']->trans('Data edited.')
-                    )
-                );
+        try {
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
+            }
+            $boardModel = new BoardModel($app);
+            $this->view['userId'] = (int)$boardModel->getUserId($currentUser);
+            $id = (int)$request->get('id', $this->view['userId']);
+            $usersModel = new UsersModel($app);
+            $user = $usersModel->getUserDetails($id);
+            if (count($user)) {
+                $form = $app['form.factory']
+                    ->createBuilder(new UserForm(), $user)->getForm();
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        $usersModel->editUser($data);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']->trans('Data edited.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('user_index'),
+                            301
+                        );
+                    } catch (\Exception $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong'));
+                    }
+                }
+
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
+
+            } else {
                 return $app->redirect(
                     $app['url_generator']->generate('user_index'),
                     301
                 );
             }
-
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
-
-        } else {
-            return $app->redirect(
-                $app['url_generator']->generate('user_index'),
-                301
-            );
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('users/edit.twig', $this->view);
     }
@@ -212,52 +228,58 @@ class UsersController implements ControllerProviderInterface
      */
     public function deleteAction(Application $app, Request $request)
     {
+        try {
+            $usersModel = new UsersModel($app);
+            $id = (int)$request->get('id', null);
+            $user = $usersModel->getUserDetails($id);
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
+            }
+            $boardModel = new BoardModel($app);
+            
+            if (count($user) && (int)$boardModel->getUserId($currentUser) != $id) {
+                $form = $app['form.factory']
+                    ->createBuilder(new UserForm(), $user)->getForm();
+                $form->remove('name');
+                $form->remove('surname');
+                $form->remove('email');
+                $form->remove('website');
+                $form->remove('facebook');
+                $form->handleRequest($request);
 
-        $usersModel = new UsersModel($app);
-        $id = (int)$request->get('id', null);
-        $user = $usersModel->getUserDetails($id);
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        
-        if (count($user) && (int)$boardModel->getUserId($currentUser) != $id) {
-            $form = $app['form.factory']
-                ->createBuilder(new UserForm(), $user)->getForm();
-            $form->remove('name');
-            $form->remove('surname');
-            $form->remove('email');
-            $form->remove('website');
-            $form->remove('facebook');
-            $form->handleRequest($request);
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        $usersModel->deleteUser($data);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']->trans('User deleted.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('user_index'),
+                            301
+                        );
+                    } catch (\Exception $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong'));
+                    }
+                }
 
-            if ($form->isValid()) {
-                $data = $form->getData();
-                $usersModel->deleteUser($data);
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']->trans('User deleted.')
-                    )
-                );
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
+
+            } else {
                 return $app->redirect(
                     $app['url_generator']->generate('user_index'),
                     301
                 );
             }
-
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
-
-        } else {
-            return $app->redirect(
-                $app['url_generator']->generate('user_index'),
-                301
-            );
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
-
         return $app['twig']->render('users/delete.twig', $this->view);
     }
 
@@ -271,12 +293,16 @@ class UsersController implements ControllerProviderInterface
      */
     public function searchAction(Application $app, Request $request)
     {
-        isset($_GET['login'])?$login = $_GET['login']:$login = null;
-        $usersModel = new UsersModel($app);
-        $this->view['user'] = $usersModel->getSingleUser($login);
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $this->view['currentUser'] = $token->getUsername();
+        try {
+            isset($_GET['login'])?$login = $_GET['login']:$login = null;
+            $usersModel = new UsersModel($app);
+            $this->view['user'] = $usersModel->getSingleUser($login);
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $this->view['currentUser'] = $token->getUsername();
+            }
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('users/search.twig', $this->view);
     }
@@ -300,32 +326,36 @@ class UsersController implements ControllerProviderInterface
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $data = $form->getData();
-                if (count($usersModel->setGrants($data))) {
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success', 'content' =>
-                            $app['translator']->trans('Grants has been changed.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('user_index'),
-                        301
-                    );
-                } else {
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'danger', 'content' =>
-                            $app['translator']
-                                ->trans('You are the last Admin, first you must choose other.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('user_index'),
-                        301
-                    );
+                try {
+                    $data = $form->getData();
+                    if (count($usersModel->setGrants($data))) {
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']->trans('Grants has been changed.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('user_index'),
+                            301
+                        );
+                    } else {
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'danger', 'content' =>
+                                $app['translator']
+                                    ->trans('You are the last Admin, first you must choose other.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('user_index'),
+                            301
+                        );
+                    }
+                } catch (\Exception $e) {
+                    $app->abort(403, $app['translator']->trans('Something went wrong'));
                 }
             }
             $this->view['id'] = $id;

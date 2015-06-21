@@ -1,0 +1,17 @@
+{% extends 'base.twig' %}
+
+{% block title %}{{ 'Error'|trans }} 500{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+    <style type="text/css">
+        p { font-size: 50px; font-weight: bold; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <p>{{ 'Error'|trans }} 500</p>
+        <p>{{ 'Sorry, something wrong with database'|trans }}</p>
+    </div>
+{% endblock %}

@@ -72,51 +72,55 @@ class RegistrationController implements ControllerProviderInterface
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $data = $form->getData();
-            $registrationModel = new RegistrationModel($app);
-            if (count($registrationModel->isUnique($data))) {
-                $register = $registrationModel->addUser($app, $data);
-            } else {
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'danger', 'content' =>
-                        $app['translator']
-                            ->trans('Someone uses this login. Try other.')
-                    )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('registration'),
-                    301
-                );
-            }
-            if (count($register)) {
-                $details = $registrationModel->getUserId();
-                $registrationModel->addUserData($details);
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'success', 'content' =>
-                        $app['translator']
-                            ->trans('Account created correctly. Now You can log in to your account.')
-                    )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('main'),
-                    301
-                );
-            } else {
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'danger', 'content' =>
-                        $app['translator']->trans('You typed different passwords! Try again.')
-                    )
-                );
-                return $app->redirect(
-                    $app['url_generator']->generate('registration'),
-                    301
-                );
+            try {
+                $data = $form->getData();
+                $registrationModel = new RegistrationModel($app);
+                if (count($registrationModel->isUnique($data))) {
+                    $register = $registrationModel->addUser($app, $data);
+                } else {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger', 'content' =>
+                            $app['translator']
+                                ->trans('Someone uses this login. Try other.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('registration'),
+                        301
+                    );
+                }
+                if (count($register)) {
+                    $details = $registrationModel->getUserId();
+                    $registrationModel->addUserData($details);
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'success', 'content' =>
+                            $app['translator']
+                                ->trans('Account created correctly. Now You can log in to your account.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('main'),
+                        301
+                    );
+                } else {
+                    $app['session']->getFlashBag()->add(
+                        'message',
+                        array(
+                            'type' => 'danger', 'content' =>
+                            $app['translator']->trans('You typed different passwords! Try again.')
+                        )
+                    );
+                    return $app->redirect(
+                        $app['url_generator']->generate('registration'),
+                        301
+                    );
+                }
+            } catch (\Exception $e) {
+                $app->abort(403, $app['translator']->trans('Something went wrong'));
             }
         }
 
