@@ -10,6 +10,7 @@
 
 namespace Model;
 
+use Doctrine\DBAL\DBALException;
 use Silex\Application;
 
 /**
@@ -18,6 +19,7 @@ use Silex\Application;
  * @package Model
  * @author Grzegorz Stefański
  * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Doctrine\DBAL\DBALException;
  * @uses Silex\Application
  */
 class IndexModel
@@ -49,16 +51,20 @@ class IndexModel
      */
     public function countUsers()
     {
-        $query = 'SELECT
-                      COUNT(*) AS countUsers
-                  FROM 
-                      users
-                  WHERE 
-                      del = 0';
-        $statement = $this->db->prepare($query);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return !$result ? array() : current($result);
+        try {
+            $query = 'SELECT
+                          COUNT(*) AS countUsers
+                      FROM 
+                          users
+                      WHERE 
+                          del = 0';
+            $statement = $this->db->prepare($query);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : current($result);
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -69,14 +75,18 @@ class IndexModel
      */
     public function countQuestions()
     {
-        $query = 'SELECT
-                      COUNT(*) AS countQuestions
-                  FROM
-                      board';
-        $statement = $this->db->prepare($query);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return !$result ? array() : current($result);
+        try {
+            $query = 'SELECT
+                          COUNT(*) AS countQuestions
+                      FROM
+                          board';
+            $statement = $this->db->prepare($query);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : current($result);
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -87,16 +97,20 @@ class IndexModel
      */
     public function countAnswers()
     {
-        $query = 'SELECT
-                      COUNT(*) AS countAnswers
-                  FROM
-                      board
-                  WHERE
-                      answer IS NOT NULL';
-        $statement = $this->db->prepare($query);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return !$result ? array() : current($result);
+        try {
+            $query = 'SELECT
+                          COUNT(*) AS countAnswers
+                      FROM
+                          board
+                      WHERE
+                          answer IS NOT NULL';
+            $statement = $this->db->prepare($query);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : current($result);
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
     /**
      * Gets information about best users.
@@ -106,26 +120,30 @@ class IndexModel
      */
     public function bestQuestioning()
     {
-        $query = '
-	    SELECT 
-                avatar,
-                login,
-                COUNT(users_question_id) AS best
-            FROM 
-                users 
-            INNER JOIN
-                board ON users_question_id = users.id 
-            INNER JOIN
-                users_data ON users.id = users_data.id
-            GROUP BY 
-                users_question_id 
-            ORDER BY
-                best DESC LIMIT 3
-	';
-        $statement = $this->db->prepare($query);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return !$result ? array() : $result;
+        try {
+            $query = '
+	            SELECT 
+                    avatar,
+                    login,
+                    COUNT(users_question_id) AS best
+                FROM 
+                    users 
+                INNER JOIN
+                    board ON users_question_id = users.id 
+                INNER JOIN
+                    users_data ON users.id = users_data.id
+                GROUP BY 
+                    users_question_id 
+                ORDER BY
+                    best DESC LIMIT 3
+	        ';
+            $statement = $this->db->prepare($query);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : $result;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -136,28 +154,32 @@ class IndexModel
      */
     public function bestAsnwering()
     {
-        $query = '
-            SELECT
-                avatar,
-                login,
-                COUNT(users_answer_id) AS best
-            FROM
-                users
-            INNER JOIN
-                board ON users_answer_id = users.id
-            INNER JOIN
-                users_data ON users.id = users_data.id
-            WHERE 
-                answer IS NOT NULL
-            GROUP BY
-                users_answer_id
-            ORDER BY
-                best DESC LIMIT 3
-        ';
-        $statement = $this->db->prepare($query);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return !$result ? array() : $result;
+        try {
+            $query = '
+                SELECT
+                    avatar,
+                    login,
+                    COUNT(users_answer_id) AS best
+                FROM
+                    users
+                INNER JOIN
+                    board ON users_answer_id = users.id
+                INNER JOIN
+                    users_data ON users.id = users_data.id
+                WHERE 
+                    answer IS NOT NULL
+                GROUP BY
+                    users_answer_id
+                ORDER BY
+                    best DESC LIMIT 3
+            ';
+            $statement = $this->db->prepare($query);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : $result;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -169,23 +191,27 @@ class IndexModel
      */
     public function haveQuestions($id)
     {
-        $query = '
-            SELECT
-                COUNT(*) AS counter
-            FROM
-                board
-            WHERE
-                users_answer_id = :id
-            AND
-                row_ignore = 0
-            AND 
-                answer IS NULL
-        ';
-        $statement = $this->db->prepare($query);
-        $statement->bindValue('id', $id, \PDO::PARAM_INT);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return $result[0]['counter'] == 0 ? 0 : 1;
+        try {
+            $query = '
+                SELECT
+                    COUNT(*) AS counter
+                FROM
+                    board
+                WHERE
+                    users_answer_id = :id
+                AND
+                    row_ignore = 0
+                AND 
+                    answer IS NULL
+            ';
+            $statement = $this->db->prepare($query);
+            $statement->bindValue('id', $id, \PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return $result[0]['counter'] == 0 ? 0 : 1;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -197,28 +223,32 @@ class IndexModel
      */
     public function dataCompleted($id)
     {
-        $query = '
-            SELECT 
-                *
-            FROM
-                users_data
-            WHERE
-                users_id = :id
-            AND (
-                name IS NULL
-            OR 
-                surname is NULL
-            OR
-                email IS NULL
-            OR
-                website IS NULL
-            OR
-                facebook IS NULL
-        )';
-        $statement = $this->db->prepare($query);
-        $statement->bindValue('id', $id, \PDO::PARAM_INT);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return !$result ? 0 : 1;
+        try {
+            $query = '
+                SELECT 
+                    *
+                FROM
+                    users_data
+                WHERE
+                    users_id = :id
+                AND (
+                    name IS NULL
+                OR 
+                    surname is NULL
+                OR
+                    email IS NULL
+                OR
+                    website IS NULL
+                OR
+                    facebook IS NULL
+            )';
+            $statement = $this->db->prepare($query);
+            $statement->bindValue('id', $id, \PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? 0 : 1;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 }

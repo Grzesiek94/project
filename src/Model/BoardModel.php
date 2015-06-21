@@ -10,6 +10,7 @@
 
 namespace Model;
 
+use Doctrine\DBAL\DBALException;
 use Silex\Application;
 
 /**
@@ -18,6 +19,7 @@ use Silex\Application;
  * @package Model
  * @author Grzegorz Stefański
  * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Doctrine\DBAL\DBALException;
  * @uses Silex\Application
  */
 class BoardModel
@@ -52,37 +54,41 @@ class BoardModel
      */
     public function getQuestionsPage($page, $limit, $id)
     {
-        $query = '
-            SELECT
-                board.id as question_id,
-                del,
-                login,
-                avatar,
-                question,
-                answer,
-                users_question_id,
-                users_answer_id
-            FROM 
-	        users 
-            INNER JOIN
-                users_data ON users.id = users_id
-            INNER JOIN 
-                board ON users_question_id = users.id
-            WHERE
-                users_answer_id = :id
-            AND 
-                answer IS NOT NULL
-            ORDER BY
-                board.id DESC
-            LIMIT :start, :limit
-        ';
-        $statement = $this->db->prepare($query);
-        $statement->bindValue('id', $id, \PDO::PARAM_INT);
-        $statement->bindValue('start', ($page-1)*$limit, \PDO::PARAM_INT);
-        $statement->bindValue('limit', $limit, \PDO::PARAM_INT);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return !$result ? array() : $result;
+        try {
+            $query = '
+                SELECT
+                    board.id as question_id,
+                    del,
+                    login,
+                    avatar,
+                    question,
+                    answer,
+                    users_question_id,
+                    users_answer_id
+                FROM 
+	                users 
+                INNER JOIN
+                    users_data ON users.id = users_id
+                INNER JOIN 
+                    board ON users_question_id = users.id
+                WHERE
+                    users_answer_id = :id
+                AND 
+                    answer IS NOT NULL
+                ORDER BY
+                    board.id DESC
+                LIMIT :start, :limit
+            ';
+            $statement = $this->db->prepare($query);
+            $statement->bindValue('id', $id, \PDO::PARAM_INT);
+            $statement->bindValue('start', ($page-1)*$limit, \PDO::PARAM_INT);
+            $statement->bindValue('limit', $limit, \PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : $result;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -95,25 +101,29 @@ class BoardModel
      */
     public function countQuestionsPages($limit, $id)
     {
-        $pagesCount = 0;
-        $sql = '
-            SELECT 
-                COUNT(*) as pages_count 
-            FROM
-                 board
-            WHERE
-                users_answer_id = :id
-            AND
-                answer IS NOT NULL
-        ';
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue('id', $id, \PDO::PARAM_INT);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        if ($result) {
-            $pagesCount = ceil($result[0]['pages_count']/$limit);
+        try {
+            $pagesCount = 0;
+            $sql = '
+                SELECT 
+                    COUNT(*) as pages_count 
+                FROM
+                     board
+                WHERE
+                    users_answer_id = :id
+                AND
+                    answer IS NOT NULL
+            ';
+            $statement = $this->db->prepare($sql);
+            $statement->bindValue('id', $id, \PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            if ($result) {
+                $pagesCount = ceil($result[0]['pages_count']/$limit);
+            }
+            return $pagesCount;
+        } catch (\PDOException $e) {
+            throw $e;
         }
-        return $pagesCount;
     }
 
     /**
@@ -152,7 +162,7 @@ class BoardModel
      /* Inserts question to db.
      *
      * @access public
-     * @param array $data Registration data
+     * @param array $question users question
      * @retun mixed Result
      */
     public function askQuestion($question)
@@ -169,22 +179,26 @@ class BoardModel
      */
     public function getUserId($name)
     {
-        if (($name != '') && ($name != 'anon.')) {
-            $query = '
-                SELECT
-                    id
-                FROM
-                    users
-                WHERE
-                    login = :name
-            ';
-            $statement = $this->db->prepare($query);
-            $statement->bindValue('name', $name, \PDO::PARAM_STR);
-            $statement->execute();
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            return !$result ? null : $result[0]['id'];
-        } else {
-            return null;
+        try {
+            if (($name != '') && ($name != 'anon.')) {
+                $query = '
+                    SELECT
+                        id
+                    FROM
+                        users
+                    WHERE
+                        login = :name
+                ';
+                $statement = $this->db->prepare($query);
+                $statement->bindValue('name', $name, \PDO::PARAM_STR);
+                $statement->execute();
+                $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                return !$result ? null : $result[0]['id'];
+            } else {
+                return null;
+            }
+        } catch (\PDOException $e) {
+            throw $e;
         }
     }
 }

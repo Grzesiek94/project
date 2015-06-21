@@ -10,6 +10,7 @@
 
 namespace Model;
 
+use Doctrine\DBAL\DBALException;
 use Silex\Application;
 
 /**
@@ -18,6 +19,7 @@ use Silex\Application;
  * @package Model
  * @author Grzegorz Stefański
  * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Doctrine\DBAL\DBALException;
  * @uses Silex\Application
  */
 class UsersModel
@@ -51,31 +53,35 @@ class UsersModel
     public function getUser($id)
     {
         if (($id != '') && ctype_digit((string)$id)) {
-            $query = '
-                SELECT
-                    users.id, 
-                    avatar, 
-                    login, 
-                    name, 
-                    surname, 
-                    email, 
-                    website, 
-                    facebook
-                FROM
-                    users, 
-                    users_data
-                WHERE
-                    users.id = users_id
-                AND
-                    users.id = :id
-                AND
-                    del = 0
-            ';
-            $statement = $this->db->prepare($query);
-            $statement->bindValue('id', $id, \PDO::PARAM_INT);
-            $statement->execute();
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            return !$result ? array() : current($result);
+            try {
+                $query = '
+                    SELECT
+                        users.id, 
+                        avatar, 
+                        login, 
+                        name, 
+                        surname, 
+                        email, 
+                        website, 
+                        facebook
+                    FROM
+                        users, 
+                        users_data
+                    WHERE
+                        users.id = users_id
+                    AND
+                        users.id = :id
+                    AND
+                        del = 0
+                ';
+                $statement = $this->db->prepare($query);
+                $statement->bindValue('id', $id, \PDO::PARAM_INT);
+                $statement->execute();
+                $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                return !$result ? array() : current($result);
+            } catch (\PDOException $e) {
+                throw $e;
+            }
         } else {
             return array();
         }
@@ -91,28 +97,32 @@ class UsersModel
     public function getUserDetails($id)
     {
         if (($id != '') && ctype_digit((string)$id)) {
-            $query = '
-                SELECT
-                    users_data.id, 
-                    name, surname, 
-                    email, 
-                    website, 
-                    facebook
-                FROM
-                    users_data, 
-                    users
-                WHERE
-                    users.id = users_data.id
-                AND
-                    users.id = :id
-                AND
-                    del = 0
-            ';
-            $statement = $this->db->prepare($query);
-            $statement->bindValue('id', $id, \PDO::PARAM_INT);
-            $statement->execute();
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            return !$result ? array() : current($result);
+            try {
+                $query = '
+                    SELECT
+                        users_data.id, 
+                        name, surname, 
+                        email, 
+                        website, 
+                        facebook
+                    FROM
+                        users_data, 
+                        users
+                    WHERE
+                        users.id = users_data.id
+                    AND
+                        users.id = :id
+                    AND
+                        del = 0
+                ';
+                $statement = $this->db->prepare($query);
+                $statement->bindValue('id', $id, \PDO::PARAM_INT);
+                $statement->execute();
+                $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                return !$result ? array() : current($result);
+            } catch (\PDOException $e) {
+                throw $e;
+            }
         } else {
             return array();
         }
@@ -128,31 +138,35 @@ class UsersModel
      */
     public function getUsersPage($page, $limit)
     {
-        $query = '
-            SELECT 
-                users.id, 
-                role_id, 
-                login, 
-                name, 
-                surname, 
-                avatar
-            FROM 
-                users,
-                users_data
-            WHERE
-                users.id = users_id
-           AND
-                del = 0
-           ORDER BY 
-                login
-           LIMIT :start, :limit
-        ';
-        $statement = $this->db->prepare($query);
-        $statement->bindValue('start', ($page-1)*$limit, \PDO::PARAM_INT);
-        $statement->bindValue('limit', $limit, \PDO::PARAM_INT);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return !$result ? array() : $result;
+        try {
+            $query = '
+                SELECT 
+                    users.id, 
+                    role_id, 
+                    login, 
+                    name, 
+                    surname, 
+                    avatar
+                FROM 
+                    users,
+                    users_data
+                WHERE
+                    users.id = users_id
+               AND
+                    del = 0
+               ORDER BY 
+                    login
+               LIMIT :start, :limit
+            ';
+            $statement = $this->db->prepare($query);
+            $statement->bindValue('start', ($page-1)*$limit, \PDO::PARAM_INT);
+            $statement->bindValue('limit', $limit, \PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return !$result ? array() : $result;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -164,20 +178,24 @@ class UsersModel
      */
     public function countUsersPages($limit)
     {
-        $pagesCount = 0;
-        $sql = '
-            SELECT
-                COUNT(*) AS pages_count
-            FROM
-                users
-            WHERE
-                del = 0
-        ';
-        $result = $this->db->fetchAssoc($sql);
-        if ($result) {
-            $pagesCount = ceil($result['pages_count']/$limit);
+        try {
+            $pagesCount = 0;
+            $sql = '
+                SELECT
+                    COUNT(*) AS pages_count
+                FROM
+                    users
+                WHERE
+                    del = 0
+            ';
+            $result = $this->db->fetchAssoc($sql);
+            if ($result) {
+                $pagesCount = ceil($result['pages_count']/$limit);
+            }
+            return $pagesCount;
+        } catch (\PDOException $e) {
+            throw $e;
         }
-        return $pagesCount;
     }
 
     /**
@@ -188,17 +206,21 @@ class UsersModel
      */
     public function countAdmins()
     {
-        $sql = '
-            SELECT
-                COUNT(*) AS counter
-            FROM
-                users
-            WHERE
-                role_id = 1
-            AND
-                del = 0
-        ';
-        $result = $this->db->fetchAssoc($sql);
+        try {
+            $sql = '
+                SELECT
+                    COUNT(*) AS counter
+                FROM
+                    users
+                WHERE
+                    role_id = 1
+                AND
+                    del = 0
+            ';
+            $result = $this->db->fetchAssoc($sql);
+        } catch (\PDOException $e) {
+            throw $e;
+        }
         if ($result) {
             return (int)$result['counter'];
         } else {
@@ -291,29 +313,33 @@ class UsersModel
     public function getSingleUser($login)
     {
         if ($login != '') {
-            $query = '
-                SELECT
-                    users.id,
-                    role_id,
-                    login,
-                    name,
-                    surname,
-                    avatar
-                FROM
-                    users,
-                    users_data
-                WHERE
-                    users.id = users_id
-                AND
-                    login = :login
-                AND
-                    del = 0
-            ';
-            $statement = $this->db->prepare($query);
-            $statement->bindValue('login', $login, \PDO::PARAM_STR);
-            $statement->execute();
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            return !$result ? array() : current($result);
+            try {
+                $query = '
+                    SELECT
+                        users.id,
+                        role_id,
+                        login,
+                        name,
+                        surname,
+                        avatar
+                    FROM
+                        users,
+                        users_data
+                    WHERE
+                        users.id = users_id
+                    AND
+                        login = :login
+                    AND
+                        del = 0
+                ';
+                $statement = $this->db->prepare($query);
+                $statement->bindValue('login', $login, \PDO::PARAM_STR);
+                $statement->execute();
+                $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                return !$result ? array() : current($result);
+            } catch (\PDOException $e) {
+                throw $e;
+            }
         } else {
             return array();
         }
@@ -357,8 +383,17 @@ class UsersModel
      */
     public function getRoles()
     {
-        $query = 'SELECT id, name as role_id FROM roles';
-        return $this->db->fetchAll($query);
+        try {
+            $query = '
+                SELECT 
+                    id,
+                    name AS role_id
+                FROM 
+                    roles';
+            return $this->db->fetchAll($query);
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -371,21 +406,25 @@ class UsersModel
     public function getOldPassword($userId)
     {
         if ($userId != '') {
-            $query = '
-                SELECT
-                    password
-                FROM
-                    users
-                WHERE
-                    id = :userId
-                AND
-                    del = 0
-            ';
-            $statement = $this->db->prepare($query);
-            $statement->bindValue('userId', $userId, \PDO::PARAM_INT);
-            $statement->execute();
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            return !$result ? array() : current($result);
+            try {
+                $query = '
+                    SELECT
+                        password
+                    FROM
+                        users
+                    WHERE
+                        id = :userId
+                    AND
+                        del = 0
+                ';
+                $statement = $this->db->prepare($query);
+                $statement->bindValue('userId', $userId, \PDO::PARAM_INT);
+                $statement->execute();
+                $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                return !$result ? array() : current($result);
+            } catch (\PDOException $e) {
+                throw $e;
+            }
         } else {
             return array();
         }

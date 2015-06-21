@@ -10,6 +10,7 @@
 
 namespace Model;
 
+use Doctrine\DBAL\DBALException;
 use Silex\Application;
 
 /**
@@ -18,6 +19,7 @@ use Silex\Application;
  * @package Model
  * @author Grzegorz Stefański
  * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Doctrine\DBAL\DBALException;
  * @uses Silex\Application
  */
 class RegistrationModel
@@ -69,16 +71,20 @@ class RegistrationModel
      */
     public function getUserId()
     {
-        $query = '
-            SELECT
-                id AS users_id
-            FROM
-                users
-            ORDER BY
-                users_id DESC
-            LIMIT 1
-        ';
-        return current($this->db->fetchAll($query));
+        try {
+            $query = '
+                SELECT
+                    id AS users_id
+                FROM
+                    users
+                ORDER BY
+                    users_id DESC
+                LIMIT 1
+            ';
+            return current($this->db->fetchAll($query));
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 
      /* Add user's data.
@@ -101,18 +107,22 @@ class RegistrationModel
      */
     public function isUnique($data)
     {
-        $query = '
-	    SELECT 
-                COUNT(login) as isUnique
-            FROM 
-                users
-            WHERE
-                login = :login
-	';
-        $statement = $this->db->prepare($query);
-        $statement->bindValue('login', $data['login'], \PDO::PARAM_STR);
-        $statement->execute();
-        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        return $result[0]['isUnique'] > 0 ? array() : $result;
+        try {
+            $query = '
+	            SELECT 
+                    COUNT(login) as isUnique
+                FROM 
+                    users
+                WHERE
+                    login = :login
+	        ';
+            $statement = $this->db->prepare($query);
+            $statement->bindValue('login', $data['login'], \PDO::PARAM_STR);
+            $statement->execute();
+            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+            return $result[0]['isUnique'] > 0 ? array() : $result;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
     }
 }

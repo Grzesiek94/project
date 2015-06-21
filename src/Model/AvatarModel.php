@@ -10,6 +10,7 @@
 
 namespace Model;
 
+use Doctrine\DBAL\DBALException;
 use Silex\Application;
 
 /**
@@ -18,6 +19,7 @@ use Silex\Application;
  * @package Model
  * @author Grzegorz Stefański
  * @link wierzba.wzks.uj.edu.pl/~13_stefanski/php
+ * @uses Doctrine\DBAL\DBALException;
  * @uses Silex\Application
  */
 class AvatarModel
