@@ -159,7 +159,8 @@ class BoardModel
         );
     }
 
-     /* Inserts question to db.
+    /**
+     * Inserts question to db.
      *
      * @access public
      * @param array $question users question

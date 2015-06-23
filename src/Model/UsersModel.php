@@ -261,7 +261,8 @@ class UsersModel
         );
     }
 
-     /* Edits user.
+    /**
+     * Edits user.
      *
      * @access public
      * @param array $user User data
@@ -279,7 +280,8 @@ class UsersModel
         }
     }
 
-     /* Delete user.
+     /**
+     * Delete user.
      *
      * @access public
      * @param array $user User data
@@ -345,7 +347,8 @@ class UsersModel
         }
     }
 
-     /* Set grants.
+    /**
+     * Set grants.
      *
      * @access public
      * @param array $user User's data
@@ -429,7 +432,9 @@ class UsersModel
             return array();
         }
     }
-     /* Resets password.
+
+    /**
+     * Resets password.
      *
      * @access public
      * @param Silex\Application $app Silex application

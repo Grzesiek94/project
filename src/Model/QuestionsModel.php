@@ -141,7 +141,8 @@ class QuestionsModel
         }
     }
 
-    /* Edits data.
+    /**
+     * Edits data.
      *
      * @access public
      * @param array $data Question data
@@ -162,7 +163,8 @@ class QuestionsModel
         }
     }
 
-    /* Ignores Question.
+    /**
+     * Ignores Question.
      *
      * @access public
      * @param array $data Question data
@@ -184,7 +186,8 @@ class QuestionsModel
         }
     }
 
-    /* Deletes Question.
+    /**
+     * Deletes Question.
      *
      * @access public
      * @param array $data Question data
@@ -433,7 +436,8 @@ class QuestionsModel
         }
     }
 
-    /* Deletes all ignored questions.
+    /**
+     * Deletes all ignored questions.
      *
      * @access public
      * @retun mixed Result

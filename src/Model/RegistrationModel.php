@@ -43,7 +43,8 @@ class RegistrationModel
         $this->db = $app['db'];
     }
 
-     /* Add user.
+    /**
+     * Add user.
      *
      * @access public
      * @param Silex\Application $app Silex application
@@ -87,7 +88,8 @@ class RegistrationModel
         }
     }
 
-     /* Add user's data.
+    /**
+     * Add user's data.
      *
      * @access public
      * @param array $data Registration data

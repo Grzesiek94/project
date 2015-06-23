@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 $app = new Silex\Application();
-$app['debug'] = true;
+//$app['debug'] = true;
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => dirname(dirname(__FILE__)) . '/src/views',
 ));
