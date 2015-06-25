@@ -20,6 +20,8 @@ use Form\ResetPasswordForm;
 use Model\UsersModel;
 use Model\BoardModel;
 use Model\AvatarModel;
+use Doctrine\DBAL\DBALException;
+use MyException\FormValidException;
 
 /**
  * Class UsersController.
@@ -38,6 +40,8 @@ use Model\AvatarModel;
  * @uses Model\UsersModel
  * @uses Model\BoardModel
  * @uses Model\AvatarModel
+ * @uses Doctrine\DBAL\DBALException
+ * @uses MyException\FormValidException
  */
 class UsersController implements ControllerProviderInterface
 {
@@ -198,8 +202,8 @@ class UsersController implements ControllerProviderInterface
                             $app['url_generator']->generate('user_index'),
                             301
                         );
-                    } catch (\Exception $e) {
-                        $app->abort(403, $app['translator']->trans('Something went wrong'));
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
                     }
                 }
 
@@ -263,8 +267,8 @@ class UsersController implements ControllerProviderInterface
                             $app['url_generator']->generate('user_index'),
                             301
                         );
-                    } catch (\Exception $e) {
-                        $app->abort(403, $app['translator']->trans('Something went wrong'));
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
                     }
                 }
 
@@ -317,54 +321,58 @@ class UsersController implements ControllerProviderInterface
      */
     public function setGrantsAction(Application $app, Request $request)
     {
-        $usersModel = new UsersModel($app);
-        $id = (int)$request->get('id', null);
-        $user = $usersModel->getUserDetails($id);
-        if (count($user)) {
-            $form = $app['form.factory']
-                ->createBuilder(new GrantsForm($app), $user)->getForm();
-            $form->handleRequest($request);
+        try {
+            $usersModel = new UsersModel($app);
+            $id = (int)$request->get('id', null);
+            $user = $usersModel->getUserDetails($id);
+            if (count($user)) {
+                $form = $app['form.factory']
+                    ->createBuilder(new GrantsForm($app), $user)->getForm();
+                $form->handleRequest($request);
 
-            if ($form->isValid()) {
-                try {
-                    $data = $form->getData();
-                    if (count($usersModel->setGrants($data))) {
-                        $app['session']->getFlashBag()->add(
-                            'message',
-                            array(
-                                'type' => 'success', 'content' =>
-                                $app['translator']->trans('Grants has been changed.')
-                            )
-                        );
-                        return $app->redirect(
-                            $app['url_generator']->generate('user_index'),
-                            301
-                        );
-                    } else {
-                        $app['session']->getFlashBag()->add(
-                            'message',
-                            array(
-                                'type' => 'danger', 'content' =>
-                                $app['translator']
-                                    ->trans('You are the last Admin, first you must choose other.')
-                            )
-                        );
-                        return $app->redirect(
-                            $app['url_generator']->generate('user_index'),
-                            301
-                        );
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        if (count($usersModel->setGrants($data))) {
+                            $app['session']->getFlashBag()->add(
+                                'message',
+                                array(
+                                    'type' => 'success', 'content' =>
+                                    $app['translator']->trans('Grants has been changed.')
+                                )
+                            );
+                            return $app->redirect(
+                                $app['url_generator']->generate('user_index'),
+                                301
+                            );
+                        } else {
+                            $app['session']->getFlashBag()->add(
+                                'message',
+                                array(
+                                    'type' => 'danger', 'content' =>
+                                    $app['translator']
+                                        ->trans('You are the last Admin, first you must choose other.')
+                                )
+                            );
+                            return $app->redirect(
+                                $app['url_generator']->generate('user_index'),
+                                301
+                            );
+                        }
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
                     }
-                } catch (\Exception $e) {
-                    $app->abort(403, $app['translator']->trans('Something went wrong'));
                 }
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
+            } else {
+                return $app->redirect(
+                    $app['url_generator']->generate('user_index'),
+                    301
+                );
             }
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
-        } else {
-            return $app->redirect(
-                $app['url_generator']->generate('user_index'),
-                301
-            );
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('users/setGrants.twig', $this->view);
     }
@@ -378,60 +386,64 @@ class UsersController implements ControllerProviderInterface
      */
     public function avatarAction(Application $app, Request $request)
     {
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        $userId = $boardModel->getUserId($currentUser);
-        $id = (int)$request->get('id', $userId);
+        try {
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
+            }
+            $boardModel = new BoardModel($app);
+            $userId = $boardModel->getUserId($currentUser);
+            $id = (int)$request->get('id', $userId);
 
-        $data = array();
-        $form = $app['form.factory']
-            ->createBuilder(new AvatarForm(), $data)->getForm();
-        if ($request->isMethod('POST')) {
-            $form->bind($request);
-            if ($form->isValid()) {
-                try {
-                    $files = $request->files->get($form->getName());
-                    $mediaPath = dirname(dirname(dirname(__FILE__))).'/web/upload';
-                    $photosModel = new AvatarModel($app);
-                    $photosModel->saveImage($files, $mediaPath, $userId);
+            $data = array();
+            $form = $app['form.factory']
+                ->createBuilder(new AvatarForm(), $data)->getForm();
+            if ($request->isMethod('POST')) {
+                $form->bind($request);
+                if ($form->isValid()) {
+                    try {
+                        $files = $request->files->get($form->getName());
+                        $mediaPath = dirname(dirname(dirname(__FILE__))).'/web/upload';
+                        $photosModel = new AvatarModel($app);
+                        $photosModel->saveImage($files, $mediaPath, $userId);
 
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success',
-                            'content' => $app['translator']
-                                ->trans('Avatar successfully uploaded.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('user_profile'),
-                        301
-                    );
-                } catch (Exception $e) {
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success',
+                                'content' => $app['translator']
+                                    ->trans('Avatar successfully uploaded.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('user_profile'),
+                            301
+                        );
+                    } catch (\FormValidException $e) {
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'error',
+                                'content' => $app['translator']
+                                    ->trans('Can not upload file.')
+                            )
+                        );
+                    }
+                } else {
                     $app['session']->getFlashBag()->add(
                         'message',
                         array(
                             'type' => 'error',
                             'content' => $app['translator']
-                                ->trans('Can not upload file.')
+                                ->trans('Form contains invalid data.')
                         )
                     );
                 }
-            } else {
-                $app['session']->getFlashBag()->add(
-                    'message',
-                    array(
-                        'type' => 'error',
-                        'content' => $app['translator']
-                            ->trans('Form contains invalid data.')
-                    )
-                );
             }
+            $this->view['form'] = $form->createView();
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
-        $this->view['form'] = $form->createView();
         return $app['twig']->render('users/avatar.twig', $this->view);
     }
     /**
@@ -444,67 +456,74 @@ class UsersController implements ControllerProviderInterface
      */
     public function resetPasswordAction(Application $app, Request $request)
     {
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        $userId = (int)$boardModel->getUserId($currentUser);
-        $id = (int)$request->get('id', $userId);
-        if ($userId === $id) {
-            $form = $app['form.factory']
-                ->createBuilder(new ResetPasswordForm())->getForm();
-            $form->handleRequest($request);
-            if ($form->isValid()) {
-                $data = $form->getData();
-                $usersModel = new UsersModel($app);
-                $OldPassword = $usersModel->getOldPassword($userId);
-                
-                if (count($usersModel
-                    ->resetPassword($app, $data, $OldPassword, $userId))) {
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success', 'content' =>
-                            $app['translator']->trans('Password changed.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('user_profile'),
-                        301
-                    );
-                } else {
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'danger', 'content' =>
-                            $app['translator']->trans('Wrong old password or You typed different passwords.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('user_profile'),
-                        301
-                    );
-                }
+        try {
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
             }
+            $boardModel = new BoardModel($app);
+            $userId = (int)$boardModel->getUserId($currentUser);
+            $id = (int)$request->get('id', $userId);
+            if ($userId === $id) {
+                $form = $app['form.factory']
+                    ->createBuilder(new ResetPasswordForm())->getForm();
+                $form->handleRequest($request);
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        $usersModel = new UsersModel($app);
+                        $OldPassword = $usersModel->getOldPassword($userId);
+                        
+                        if (count($usersModel
+                            ->resetPassword($app, $data, $OldPassword, $userId))) {
+                            $app['session']->getFlashBag()->add(
+                                'message',
+                                array(
+                                    'type' => 'success', 'content' =>
+                                    $app['translator']->trans('Password changed.')
+                                )
+                            );
+                            return $app->redirect(
+                                $app['url_generator']->generate('user_profile'),
+                                301
+                            );
+                        } else {
+                            $app['session']->getFlashBag()->add(
+                                'message',
+                                array(
+                                    'type' => 'danger', 'content' =>
+                                    $app['translator']->trans('Wrong old password or You typed different passwords.')
+                                )
+                            );
+                            return $app->redirect(
+                                $app['url_generator']->generate('user_profile'),
+                                301
+                            );
+                        }
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
+                    }
+                }
 
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
 
-        } else {
-            $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'danger', 'content' =>
-                    $app['translator']->trans('Illegal movement.')
-                )
-            );
-            return $app->redirect(
-                $app['url_generator']->generate('user_index'),
-                301
-            );
+            } else {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
+                        $app['translator']->trans('Illegal movement.')
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('user_index'),
+                    301
+                );
+            }
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
-
         return $app['twig']->render('users/resetPassword.twig', $this->view);
     }
 }

@@ -19,3 +19,6 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 ALTER TABLE `users`
   ADD CONSTRAINT `FK_users_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
+
+INSERT INTO `users` (`id`, `login`, `password`, `role_id`) VALUES 
+('1', 'Admin', 'DJAhPVmfV76bEZ9xsW5O3oaN9o+zmwpRZ78XW5QspToIjtbBlAFSbd5v3l/QFdj1F5svzjMZ5tuQsugny0MnpA==', '1');

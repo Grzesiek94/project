@@ -102,7 +102,7 @@ $app->error(
         if ($e instanceof Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
             $code = (string)$e->getStatusCode();
         }
-
+var_dump($code);
     //    if ($app['debug']) {
      //       return;
       //  }

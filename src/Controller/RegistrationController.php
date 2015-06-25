@@ -15,6 +15,8 @@ use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Model\RegistrationModel;
 use Form\RegistrationForm;
+use Doctrine\DBAL\DBALException;
+use MyException\FormValidException;
 
 /**
  * Class RegistrationController.
@@ -28,6 +30,8 @@ use Form\RegistrationForm;
  * @uses Symfony\Component\HttpFoundation\Request
  * @uses Model\RegistrationModel
  * @uses Form\RegistrationForm
+ * @uses Doctrine\DBAL\DBALException
+ * @uses MyException\FormValidException
  */
 class RegistrationController implements ControllerProviderInterface
 {
@@ -65,67 +69,70 @@ class RegistrationController implements ControllerProviderInterface
      */
     public function registerAction(Application $app, Request $request)
     {
-        $data = array();
-        $form = $app['form.factory']
-            ->createBuilder(new RegistrationForm(), $data)->getForm();
-        
-        $form->handleRequest($request);
+        try {
+            $data = array();
+            $form = $app['form.factory']
+                ->createBuilder(new RegistrationForm(), $data)->getForm();
+            
+            $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            try {
-                $data = $form->getData();
-                $registrationModel = new RegistrationModel($app);
-                if (count($registrationModel->isUnique($data))) {
-                    $register = $registrationModel->addUser($app, $data);
-                } else {
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'danger', 'content' =>
-                            $app['translator']
-                                ->trans('Someone uses this login. Try other.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('registration'),
-                        301
-                    );
+            if ($form->isValid()) {
+                try {
+                    $data = $form->getData();
+                    $registrationModel = new RegistrationModel($app);
+                    if (count($registrationModel->isUnique($data))) {
+                        $register = $registrationModel->addUser($app, $data);
+                    } else {
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'danger', 'content' =>
+                                $app['translator']
+                                    ->trans('Someone uses this login. Try other.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('registration'),
+                            301
+                        );
+                    }
+                    if (count($register)) {
+                        $details = $registrationModel->getUserId();
+                        $registrationModel->addUserData($details);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']
+                                    ->trans('Account created correctly. Now You can log in to your account.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('main'),
+                            301
+                        );
+                    } else {
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'danger', 'content' =>
+                                $app['translator']->trans('You typed different passwords! Try again.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('registration'),
+                            301
+                        );
+                    }
+                } catch (\FormValidException $e) {
+                    $app->abort(403, $app['translator']->trans('Something went wrong with form'));
                 }
-                if (count($register)) {
-                    $details = $registrationModel->getUserId();
-                    $registrationModel->addUserData($details);
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success', 'content' =>
-                            $app['translator']
-                                ->trans('Account created correctly. Now You can log in to your account.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('main'),
-                        301
-                    );
-                } else {
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'danger', 'content' =>
-                            $app['translator']->trans('You typed different passwords! Try again.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('registration'),
-                        301
-                    );
-                }
-            } catch (\Exception $e) {
-                $app->abort(403, $app['translator']->trans('Something went wrong'));
             }
+
+            $this->view['form'] = $form->createView();
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
-
-        $this->view['form'] = $form->createView();
-
         return $app['twig']->render('registration/index.twig', $this->view);
     }
 }

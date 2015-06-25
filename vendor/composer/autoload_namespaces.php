@@ -28,6 +28,7 @@ return array(
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Provider' => array($baseDir . '/src'),
     'Pimple' => array($vendorDir . '/pimple/pimple/lib'),
+    'MyException' => array($baseDir . '/src'),
     'Model' => array($baseDir . '/src'),
     'Form' => array($baseDir . '/src'),
     'Doctrine\\DBAL' => array($vendorDir . '/doctrine/dbal/lib'),

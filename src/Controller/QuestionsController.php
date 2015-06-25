@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Model\QuestionsModel;
 use Model\BoardModel;
 use Form\QuestionForm;
+use Doctrine\DBAL\DBALException;
+use MyException\FormValidException;
 
 /**
  * Class QuestionsController.
@@ -30,6 +32,8 @@ use Form\QuestionForm;
  * @uses Model\QuestionsModel
  * @uses Model\BoardModel
  * @uses Form\QuestionForm
+ * @uses Doctrine\DBAL\DBALException
+ * @uses MyException\FormValidException
  */
 class QuestionsController implements ControllerProviderInterface
 {
@@ -92,14 +96,18 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function indexAction(Application $app, Request $request)
     {
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
+        try {
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
+            }
+            $boardModel = new BoardModel($app);
+            $id = (int)$boardModel->getUserId($currentUser);
+            $questionsModel = new QuestionsModel($app);
+            $this->view['questions'] = $questionsModel->getUnanswered($id);
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
-        $boardModel = new BoardModel($app);
-        $id = (int)$boardModel->getUserId($currentUser);
-        $questionsModel = new QuestionsModel($app);
-        $this->view['questions'] = $questionsModel->getUnanswered($id);
         return $app['twig']->render('questions/index.twig', $this->view);
     }
 
@@ -113,58 +121,62 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function answerAction(Application $app, Request $request)
     {
-        $id = (int) $request->get('id', null);
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        $userId = (int)$boardModel->getUserId($currentUser);
-        $questionsModel = new QuestionsModel($app);
-        $question = $questionsModel->getSingleQuestion($id, $userId);
-        $this->view['question'] = $question;
-        if (count($question)) {
-            $form = $app['form.factory']
-                ->createBuilder(new QuestionForm(), $question)->getForm();
-            $form->remove('question');
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                try {
-                    $data = $form->getData();
-                    $questionsModel->edit($data);
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success', 'content' =>
-                            $app['translator']->trans('Answer added correctly.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('questions_index'),
-                        301
-                    );
-                } catch (\Exception $e) {
-                    $app->abort(403, $app['translator']->trans('Something went wrong'));
-                }
+        try {
+            $id = (int) $request->get('id', null);
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
             }
+            $boardModel = new BoardModel($app);
+            $userId = (int)$boardModel->getUserId($currentUser);
+            $questionsModel = new QuestionsModel($app);
+            $question = $questionsModel->getSingleQuestion($id, $userId);
+            $this->view['question'] = $question;
+            if (count($question)) {
+                $form = $app['form.factory']
+                    ->createBuilder(new QuestionForm(), $question)->getForm();
+                $form->remove('question');
+                $form->handleRequest($request);
 
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        $questionsModel->edit($data);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']->trans('Answer added correctly.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('questions_index'),
+                            301
+                        );
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
+                    }
+                }
 
-        } else {
-            $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'danger', 'content' =>
-                    $app['translator']
-                        ->trans('You tried to make something illegal! Be care.')
-                )
-            );
-            return $app->redirect(
-                $app['url_generator']->generate('questions_index'),
-                301
-            );
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
+
+            } else {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
+                        $app['translator']
+                            ->trans('You tried to make something illegal! Be care.')
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('questions_index'),
+                    301
+                );
+            }
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('questions/answer.twig', $this->view);
     }
@@ -179,14 +191,18 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function askedQuestionAction(Application $app, Request $request)
     {
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
+        try {
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
+            }
+            $boardModel = new BoardModel($app);
+            $id = (int)$boardModel->getUserId($currentUser);
+            $questionsModel = new QuestionsModel($app);
+            $this->view['questions'] = $questionsModel->getAskedQuestions($id);
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
-        $boardModel = new BoardModel($app);
-        $id = (int)$boardModel->getUserId($currentUser);
-        $questionsModel = new QuestionsModel($app);
-        $this->view['questions'] = $questionsModel->getAskedQuestions($id);
         return $app['twig']->render('questions/asked.twig', $this->view);
     }
 
@@ -200,58 +216,62 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function editQuestionAction(Application $app, Request $request)
     {
-        $id = (int) $request->get('id', null);
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        $userId = (int)$boardModel->getUserId($currentUser);
-        $questionsModel = new QuestionsModel($app);
-        $question = $questionsModel->getQuestionToEdit($id, $userId);
-        $this->view['question'] = $question;
-        if (count($question)) {
-            $form = $app['form.factory']
-                ->createBuilder(new QuestionForm(), $question)->getForm();
-            $form->remove('answer');
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                try {
-                    $data = $form->getData();
-                    $questionsModel->edit($data);
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success', 'content' =>
-                            $app['translator']->trans('Question edited.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('my_questions'),
-                        301
-                    );
-                } catch (\Exception $e) {
-                    $app->abort(403, $app['translator']->trans('Something went wrong'));
-                }
+        try {
+            $id = (int) $request->get('id', null);
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
             }
+            $boardModel = new BoardModel($app);
+            $userId = (int)$boardModel->getUserId($currentUser);
+            $questionsModel = new QuestionsModel($app);
+            $question = $questionsModel->getQuestionToEdit($id, $userId);
+            $this->view['question'] = $question;
+            if (count($question)) {
+                $form = $app['form.factory']
+                    ->createBuilder(new QuestionForm(), $question)->getForm();
+                $form->remove('answer');
+                $form->handleRequest($request);
 
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        $questionsModel->edit($data);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']->trans('Question edited.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('my_questions'),
+                            301
+                        );
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
+                    }
+                }
 
-        } else {
-            $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'danger', 'content' =>
-                    $app['translator']
-                        ->trans('You tried to make something illegal! Be care.')
-                )
-            );
-            return $app->redirect(
-                $app['url_generator']->generate('my_questions'),
-                301
-            );
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
+
+            } else {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
+                        $app['translator']
+                            ->trans('You tried to make something illegal! Be care.')
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('my_questions'),
+                    301
+                );
+            }
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('questions/edit.twig', $this->view);
     }
@@ -266,58 +286,62 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function editAnswerAction(Application $app, Request $request)
     {
-        $id = (int) $request->get('id', null);
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        $userId = (int)$boardModel->getUserId($currentUser);
-        $questionsModel = new QuestionsModel($app);
-        $answer = $questionsModel->getAnswerToEdit($id, $userId);
-        $this->view['answer'] = $answer;
-        if (count($answer)) {
-            $form = $app['form.factory']
-                ->createBuilder(new QuestionForm(), $answer)->getForm();
-            $form->remove('question');
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                try {
-                    $data = $form->getData();
-                    $questionsModel->edit($data);
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success', 'content' =>
-                            $app['translator']->trans('Answer edited.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('board_null'),
-                        301
-                    );
-                } catch (\Exception $e) {
-                    $app->abort(403, $app['translator']->trans('Something went wrong'));
-                }
+        try {
+            $id = (int) $request->get('id', null);
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
             }
+            $boardModel = new BoardModel($app);
+            $userId = (int)$boardModel->getUserId($currentUser);
+            $questionsModel = new QuestionsModel($app);
+            $answer = $questionsModel->getAnswerToEdit($id, $userId);
+            $this->view['answer'] = $answer;
+            if (count($answer)) {
+                $form = $app['form.factory']
+                    ->createBuilder(new QuestionForm(), $answer)->getForm();
+                $form->remove('question');
+                $form->handleRequest($request);
 
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        $questionsModel->edit($data);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']->trans('Answer edited.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('board_null'),
+                            301
+                        );
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
+                    }
+                }
 
-        } else {
-            $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'danger', 'content' =>
-                    $app['translator']
-                        ->trans('You tried to make something illegal! Be care.')
-                )
-            );
-            return $app->redirect(
-                $app['url_generator']->generate('board_null'),
-                301
-            );
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
+
+            } else {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
+                        $app['translator']
+                            ->trans('You tried to make something illegal! Be care.')
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('board_null'),
+                    301
+                );
+            }
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('questions/editAnswer.twig', $this->view);
     }
@@ -332,58 +356,62 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function ignoreAction(Application $app, Request $request)
     {
-        $id = (int) $request->get('id', null);
-        $token = $app['security']->getToken();
-        if (null !== $token) {
-            $currentUser = $token->getUsername();
-        }
-        $boardModel = new BoardModel($app);
-        $userId = (int)$boardModel->getUserId($currentUser);
-        $questionsModel = new QuestionsModel($app);
-        $question = $questionsModel->getSingleQuestion($id, $userId);
-        if (count($question)) {
-            $form = $app['form.factory']
-                ->createBuilder(new QuestionForm(), $question)->getForm();
-            $form->remove('answer');
-            $form->remove('question');
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                try {
-                    $data = $form->getData();
-                    $questionsModel->ignore($data);
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success', 'content' =>
-                            $app['translator']->trans('Question deleted.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']->generate('questions_index'),
-                        301
-                    );
-                } catch (\Exception $e) {
-                    $app->abort(403, $app['translator']->trans('Something went wrong'));
-                }
+        try {
+            $id = (int) $request->get('id', null);
+            $token = $app['security']->getToken();
+            if (null !== $token) {
+                $currentUser = $token->getUsername();
             }
+            $boardModel = new BoardModel($app);
+            $userId = (int)$boardModel->getUserId($currentUser);
+            $questionsModel = new QuestionsModel($app);
+            $question = $questionsModel->getSingleQuestion($id, $userId);
+            if (count($question)) {
+                $form = $app['form.factory']
+                    ->createBuilder(new QuestionForm(), $question)->getForm();
+                $form->remove('answer');
+                $form->remove('question');
+                $form->handleRequest($request);
 
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        $questionsModel->ignore($data);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']->trans('Question deleted.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']->generate('questions_index'),
+                            301
+                        );
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
+                    }
+                }
 
-        } else {
-            $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'danger', 'content' =>
-                    $app['translator']
-                        ->trans('You tried to make something illegal! Be care.')
-                )
-            );
-            return $app->redirect(
-                $app['url_generator']->generate('questions_index'),
-                301
-            );
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
+
+            } else {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
+                        $app['translator']
+                            ->trans('You tried to make something illegal! Be care.')
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('questions_index'),
+                    301
+                );
+            }
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('questions/ignore.twig', $this->view);
     }
@@ -398,55 +426,59 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function deleteAction(Application $app, Request $request)
     {
-        $id = (int) $request->get('id', null);
-        $questionsModel = new QuestionsModel($app);
-        $question = $questionsModel->letsDelete($id);
-        $redirect = $question['users_answer_id'];
-        $this->view['inform'] = $question;
-        if (count($question)) {
-            $form = $app['form.factory']
-                ->createBuilder(new QuestionForm(), $question)->getForm();
-            $form->remove('answer');
-            $form->remove('question');
-            $form->handleRequest($request);
+        try {
+            $id = (int) $request->get('id', null);
+            $questionsModel = new QuestionsModel($app);
+            $question = $questionsModel->letsDelete($id);
+            $redirect = $question['users_answer_id'];
+            $this->view['inform'] = $question;
+            if (count($question)) {
+                $form = $app['form.factory']
+                    ->createBuilder(new QuestionForm(), $question)->getForm();
+                $form->remove('answer');
+                $form->remove('question');
+                $form->handleRequest($request);
 
-            if ($form->isValid()) {
-                try {
-                    $data = $form->getData();
-                    $questionsModel->delete($data);
-                    $app['session']->getFlashBag()->add(
-                        'message',
-                        array(
-                            'type' => 'success', 'content' =>
-                            $app['translator']->trans('Question deleted.')
-                        )
-                    );
-                    return $app->redirect(
-                        $app['url_generator']
-                        ->generate('board', array('id' => $redirect)),
-                        301
-                    );
-                } catch (\Exception $e) {
-                    $app->abort(403, $app['translator']->trans('Something went wrong'));
+                if ($form->isValid()) {
+                    try {
+                        $data = $form->getData();
+                        $questionsModel->delete($data);
+                        $app['session']->getFlashBag()->add(
+                            'message',
+                            array(
+                                'type' => 'success', 'content' =>
+                                $app['translator']->trans('Question deleted.')
+                            )
+                        );
+                        return $app->redirect(
+                            $app['url_generator']
+                            ->generate('board', array('id' => $redirect)),
+                            301
+                        );
+                    } catch (\FormValidException $e) {
+                        $app->abort(403, $app['translator']->trans('Something went wrong with form'));
+                    }
                 }
+
+                $this->view['id'] = $id;
+                $this->view['form'] = $form->createView();
+
+            } else {
+                $app['session']->getFlashBag()->add(
+                    'message',
+                    array(
+                        'type' => 'danger', 'content' =>
+                        $app['translator']
+                            ->trans('You tried to make something illegal! Be care.')
+                    )
+                );
+                return $app->redirect(
+                    $app['url_generator']->generate('user_index'),
+                    301
+                );
             }
-
-            $this->view['id'] = $id;
-            $this->view['form'] = $form->createView();
-
-        } else {
-            $app['session']->getFlashBag()->add(
-                'message',
-                array(
-                    'type' => 'danger', 'content' =>
-                    $app['translator']
-                        ->trans('You tried to make something illegal! Be care.')
-                )
-            );
-            return $app->redirect(
-                $app['url_generator']->generate('user_index'),
-                301
-            );
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
         }
         return $app['twig']->render('questions/delete.twig', $this->view);
     }
@@ -460,8 +492,12 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function ignoredAction(Application $app, Request $request)
     {
-        $questionsModel = new QuestionsModel($app);
-        $this->view['ignored'] = $questionsModel->getIgnored();
+        try {
+            $questionsModel = new QuestionsModel($app);
+            $this->view['ignored'] = $questionsModel->getIgnored();
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
+        }
         return $app['twig']->render('questions/ignored.twig', $this->view);
     }
     /**
@@ -474,20 +510,24 @@ class QuestionsController implements ControllerProviderInterface
      */
     public function deleteIgnoredAction(Application $app, Request $request)
     {
-        $questionsModel = new QuestionsModel($app);
-        $questionsModel->deleteIgnored();
-        $app['session']->getFlashBag()->add(
-            'message',
-            array(
-                'type' => 'success', 'content' =>
-                $app['translator']
-                    ->trans('All ignored questions have just deleted permanently.')
-            )
-        );
-        return $app->redirect(
-            $app['url_generator']->generate('ignored'),
-            301
-        );
+        try {
+            $questionsModel = new QuestionsModel($app);
+            $questionsModel->deleteIgnored();
+            $app['session']->getFlashBag()->add(
+                'message',
+                array(
+                    'type' => 'success', 'content' =>
+                    $app['translator']
+                        ->trans('All ignored questions have just deleted permanently.')
+                )
+            );
+            return $app->redirect(
+                $app['url_generator']->generate('ignored'),
+                301
+            );
+        } catch (\PDOException $e) {
+            $app->abort(500, $app['translator']->trans('Sorry, something wrong with database'));
+        }
     }
     /**
      * Delete Ignored View Action.

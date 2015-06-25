@@ -17,7 +17,8 @@
             "Controller" : "src/",
             "Form" : "src/",
             "Model" : "src/",
-            "Provider" : "src/"
+            "Provider" : "src/",
+            "MyException" : "src/"
         }
     }
 }
