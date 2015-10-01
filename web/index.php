@@ -39,9 +39,9 @@ $app->register(
         'db.options' => array(
             'driver'    => 'pdo_mysql',
             'host'      => 'localhost',
-            'dbname'    => '13_stefanski',
-            'user'      => '13_stefanski',
-            'password'  => 'nopainnogaintrec',
+            'dbname'    => '',
+            'user'      => '',
+            'password'  => '',
             'charset'   => 'utf8',
             'driverOptions' => array(
                 1002=>'SET NAMES utf8'
